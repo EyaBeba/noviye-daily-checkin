@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#fdf0f4">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Noviye">
+<link rel="icon" href="favicon.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<title>Noviye 🌸</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Nunito:wght@400;600;700&family=Noto+Sans+Ethiopic:wght@400;600;700&family=Noto+Serif+Ethiopic:wght@600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#fdf0f4; --card:#ffffff; --field:#ffffff; --ink:#43303b; --soft:#9a7f8c; --line:#f3dbe4;
+    --rose:#e7739f; --rose-soft:#fde1eb; --lav:#a98bdc; --lav-soft:#efe7fb;
+    --peach:#f7a98b; --mint:#7cc5a6; --sky:#7fb6e8; --sky-soft:#e3f0fb; --track:#f8e9ef;
+    --sans:Nunito,"Noto Sans Ethiopic",system-ui,sans-serif; --serif:Fraunces,"Noto Serif Ethiopic",Georgia,serif;
+  }
+  [data-theme=dark]{
+    --bg:#1d1520; --card:#2a1f2e; --field:#231a27; --ink:#f6e8ef; --soft:#b9a1b0; --line:#3e2f43;
+    --rose:#f08cb3; --rose-soft:#4b2a3c; --lav:#c3a8f2; --lav-soft:#372a4d;
+    --sky-soft:#1f3346; --track:#3a2c3f;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);font:16px/1.55 var(--sans);min-height:100vh;padding:20px 16px 70px;transition:background .3s}
+  .wrap{max-width:480px;margin:0 auto}
+  h1,h2,.serif{font-family:var(--serif);font-weight:600}
+  header{margin:6px 0 16px;display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+  header .date{color:var(--soft);font-size:14px}
+  header h1{font-size:26px;line-height:1.25;margin-top:2px}
+  .hbtns{display:flex;gap:6px;flex-shrink:0}
+  .hbtns button{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;height:36px;min-width:36px;
+    padding:0 10px;font:inherit;font-size:14px;font-weight:700;cursor:pointer}
+  .tabs{display:flex;gap:4px;background:var(--card);padding:4px;border-radius:999px;margin-bottom:16px;
+    border:1px solid var(--line);position:sticky;top:8px;z-index:5;box-shadow:0 4px 14px rgba(231,115,159,.12)}
+  .tabs button{flex:1;border:0;background:transparent;padding:9px 2px;border-radius:999px;font:inherit;font-weight:700;font-size:14px;color:var(--soft);cursor:pointer}
+  .tabs button.on{background:var(--rose);color:#fff}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:18px;margin-bottom:14px;box-shadow:0 2px 10px rgba(231,115,159,.06)}
+  .card h2{font-size:19px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+  .card h2 small{font-family:var(--sans);font-size:13px;font-weight:700;color:var(--rose);background:var(--rose-soft);padding:2px 10px;border-radius:999px;white-space:nowrap}
+  .q{font-weight:700;margin-bottom:10px}
+  .hint{color:var(--soft);font-size:14px;margin:-4px 0 12px}
+  .label{font-size:12px;letter-spacing:.07em;text-transform:uppercase;font-weight:700;opacity:.85;margin-bottom:6px}
+  .sub{font-size:13px;font-weight:700;color:var(--lav);text-transform:uppercase;letter-spacing:.06em;margin:14px 0 6px}
+  .sub:first-child{margin-top:0}
+
+  .love{background:linear-gradient(135deg,var(--rose),var(--lav));color:#fff;border:0;padding:22px 20px;text-align:center}
+  .love .serif{font-size:21px;line-height:1.4}
+  .note{border:2px dashed var(--rose);background:var(--rose-soft)}
+  .note .label{color:var(--rose)}
+  .note p{font-size:17px}
+
+  .summary{display:flex;gap:10px;margin-bottom:14px}
+  .summary div{flex:1;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:10px 4px;text-align:center}
+  .summary b{display:block;font-family:var(--serif);font-size:22px;color:var(--rose)}
+  .summary span{font-size:12px;color:var(--soft)}
+
+  .check{display:flex;align-items:center;gap:12px;padding:10px 4px;border-bottom:1px dashed var(--line);cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent}
+  .check:last-child{border-bottom:0}
+  .check .ico{font-size:20px;width:28px;text-align:center}
+  .check .lbl{flex:1}
+  .box{width:26px;height:26px;border-radius:9px;border:2px solid #efc3d4;display:flex;align-items:center;justify-content:center;
+    transition:.15s;flex-shrink:0;color:#fff;font-size:15px;font-weight:700}
+  .check.on .box{background:var(--rose);border-color:var(--rose)}
+  .check.on .lbl{color:var(--soft);text-decoration:line-through}
+
+  .water{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+  .drop{width:44px;height:52px;border-radius:12px;border:2px solid var(--line);background:var(--field);font-size:22px;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;filter:grayscale(1);opacity:.45;transition:.15s}
+  .drop.on{background:var(--sky-soft);border-color:var(--sky);filter:none;opacity:1}
+  .wgoal{display:flex;justify-content:center;align-items:center;gap:10px;margin-top:12px;font-size:14px;color:var(--soft)}
+  .wgoal button{width:28px;height:28px;border-radius:50%;border:1px solid var(--line);background:var(--field);font:inherit;cursor:pointer;color:var(--ink)}
+
+  .challenge p{font-size:17px;margin-bottom:12px}
+  .pill{border:2px solid var(--rose);background:transparent;color:var(--rose);border-radius:999px;padding:8px 18px;font:inherit;font-weight:700;cursor:pointer}
+  .pill.on{background:var(--rose);color:#fff}
+  .tip b{display:block;font-size:17px;margin-bottom:4px}
+  .tip p{color:var(--soft);margin-bottom:14px}
+  .calm{width:100%;border:0;background:var(--lav-soft);color:var(--ink);padding:13px;border-radius:14px;font:inherit;font-weight:700;cursor:pointer}
+
+  .moods{display:flex;justify-content:space-between;gap:6px}
+  .moods button{flex:1;font-size:27px;padding:9px 0;border-radius:14px;border:1px solid var(--line);background:var(--field);cursor:pointer;transition:.15s}
+  .moods button.on{background:var(--rose-soft);border-color:var(--rose);transform:scale(1.06)}
+  .chips{display:flex;flex-wrap:wrap;gap:8px}
+  .chips button{border:1px solid var(--line);background:var(--field);border-radius:999px;padding:7px 14px;font:inherit;font-size:15px;color:var(--ink);cursor:pointer;transition:.15s}
+  .chips button.on{background:var(--lav-soft);border-color:var(--lav);font-weight:700}
+  .block{margin-bottom:20px}
+  .good input{margin-bottom:8px}
+  .toggle{display:flex;gap:6px;margin-bottom:12px}
+  .toggle button{flex:1;border:1px solid var(--line);background:var(--field);padding:9px;border-radius:12px;font:inherit;font-size:15px;cursor:pointer;color:var(--soft)}
+  .toggle button.on{border-color:var(--rose);background:var(--rose-soft);color:var(--ink);font-weight:700}
+  textarea,input{width:100%;border:1px solid var(--line);border-radius:12px;padding:11px 12px;font:inherit;background:var(--field);color:var(--ink)}
+  textarea{min-height:90px;resize:vertical}
+  textarea:focus,input:focus{outline:2px solid var(--rose-soft);border-color:var(--rose)}
+  ::placeholder{color:var(--soft);opacity:.8}
+  .rec{display:flex;flex-direction:column;align-items:center;gap:10px;padding:6px 0}
+  .recbtn{width:74px;height:74px;border-radius:50%;border:0;background:var(--rose);color:#fff;font-size:28px;cursor:pointer;box-shadow:0 4px 14px rgba(231,115,159,.4)}
+  .recbtn.live{animation:pulse 1.2s infinite}
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(231,115,159,.55)}50%{box-shadow:0 0 0 14px rgba(231,115,159,0)}}
+  .rec .status{color:var(--soft);font-size:14px;text-align:center}
+  audio{width:100%;margin-top:6px}
+  .link{background:none;border:0;color:var(--rose);font:inherit;font-size:14px;font-weight:700;cursor:pointer;text-decoration:underline}
+  .btn{width:100%;border:0;background:var(--rose);color:#fff;padding:14px;border-radius:14px;font:inherit;font-weight:700;font-size:16px;cursor:pointer}
+  .btn:disabled{opacity:.4;cursor:default}
+  .done{text-align:center;padding:12px 4px}
+  .done .big{font-size:38px}
+  .done h2{display:block;font-size:21px;margin:6px 0}
+  .done p{color:var(--soft)}
+
+  .addrow{display:flex;gap:8px;margin-top:10px}
+  .addrow input{flex:1;min-width:0}
+  .addrow button{border:0;background:var(--lav);color:#fff;border-radius:12px;padding:0 16px;font:inherit;font-weight:700;font-size:20px;cursor:pointer}
+  .task .del{border:0;background:none;color:var(--soft);opacity:.6;font-size:18px;cursor:pointer;padding:0 4px}
+  .none{color:var(--soft);font-size:14px;padding:6px 4px}
+
+  .hero{display:flex;align-items:center;gap:18px}
+  .ring{position:relative;width:110px;height:110px;flex-shrink:0}
+  .ring svg{transform:rotate(-90deg)}
+  .ring div{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+  .ring b{font-family:var(--serif);font-size:28px;line-height:1}
+  .ring span{font-size:11px;color:var(--soft)}
+  .aspect{margin-bottom:14px}
+  .aspect:last-child{margin-bottom:0}
+  .aspect .row{display:flex;justify-content:space-between;font-size:15px;margin-bottom:5px;gap:8px}
+  .aspect .row span{color:var(--soft);font-size:14px;white-space:nowrap}
+  .bar{height:10px;background:var(--track);border-radius:999px;overflow:hidden}
+  .bar i{display:block;height:100%;border-radius:999px;transition:width .5s}
+  .days{display:flex;justify-content:space-between;align-items:flex-end;height:120px;gap:6px}
+  .days .d{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;font-size:12px;color:var(--soft)}
+  .days .col{width:100%;max-width:30px;background:linear-gradient(180deg,var(--rose),var(--lav));border-radius:8px 8px 4px 4px;min-height:4px;margin-bottom:4px}
+  .days .em{font-size:16px;height:22px}
+  .stats{display:flex;gap:10px;margin-bottom:14px}
+  .stat{flex:1;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px 4px;text-align:center}
+  .stat b{display:block;font-family:var(--serif);font-size:24px;color:var(--rose)}
+  .stat span{color:var(--soft);font-size:12px}
+
+  .entry .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+  .entry .m{font-size:24px}
+  .qa{font-size:14px;margin-bottom:4px}
+  .qa span{color:var(--soft)}
+  .entry .sec{font-size:13px;font-weight:700;color:var(--lav);margin:10px 0 2px}
+  .entry ul{padding-left:20px}
+  .empty{text-align:center;color:var(--soft);padding:28px 10px}
+  .namebox{display:flex;gap:8px;margin-top:10px}
+  .namebox input{flex:1;min-width:0}
+  .namebox button{border:0;background:var(--rose);color:#fff;border-radius:12px;padding:0 16px;font:inherit;font-weight:700;cursor:pointer}
+  .foot{text-align:center;color:var(--soft);font-size:13px;margin-top:20px}
+  .hidden{display:none!important}
+
+  .daynav{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}
+  .daynav button{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:22px;cursor:pointer}
+  .daynav button:disabled{opacity:.3;cursor:default}
+  .daynav div{text-align:center;flex:1}
+  .daynav b{display:block;font-size:16px}
+  .daynav span{font-size:13px;color:var(--rose);font-weight:700}
+  #toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(20px);background:var(--ink);color:var(--bg);
+    padding:9px 18px;border-radius:999px;font-weight:700;font-size:14px;opacity:0;transition:.25s;pointer-events:none;z-index:60}
+  #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .ntop{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px}
+  .ntop .del{border:0;background:none;color:var(--soft);font:inherit;font-size:13px;cursor:pointer}
+  .ntop .del.armed{color:#fff;background:#d9534f;border-radius:999px;padding:2px 10px}
+  .ntxt{white-space:pre-wrap}
+
+  /* breathing overlay */
+  #breathe{position:fixed;inset:0;z-index:50;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center}
+  .orb{width:220px;height:220px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#fff6,transparent 60%),linear-gradient(135deg,var(--rose),var(--lav));
+    transform:scale(.55);box-shadow:0 0 60px rgba(231,115,159,.35);margin:30px 0}
+  #bText{font-family:var(--serif);font-size:26px;min-height:40px}
+  #bSub{color:var(--soft);margin-top:8px}
+  .bbtns{display:flex;gap:10px;margin-top:26px}
+  .bbtns button{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:10px 22px;font:inherit;font-weight:700;cursor:pointer}
+</style>
+<link rel="stylesheet" href="gentle.css?v=1795084544">
+<script>/* English only for Noviye (Amharic text stays in the code for other versions) */try{localStorage.setItem("novi:lang","en")}catch(e){}</script>
+<script>try{if(localStorage.getItem("novi:pin-hash"))document.documentElement.classList.add("locked")}catch(e){}</script>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div>
+      <div class="date" id="date"></div>
+      <h1 id="greet"></h1>
+    </div>
+    <div class="hbtns">
+      <button id="langBtn" aria-label="Language">አማ</button>
+      <button id="themeBtn" aria-label="Dark mode">🌙</button>
+    </div>
+  </header>
+
+  <div class="card hidden" id="welcome">
+    <div class="q" data-i="welcomeTitle"></div>
+    <p class="hint" style="margin:0" data-i="welcomeBody"></p>
+    <div class="namebox">
+      <input id="nameIn" data-ph="namePh" maxlength="30">
+      <button id="nameBtn" data-i="start"></button>
+    </div>
+  </div>
+
+  <nav class="tabs">
+    <button class="on" data-tab="today" data-i="today"></button>
+    <button data-tab="tasks" data-i="tasks"></button>
+    <button data-tab="progress" data-i="progress"></button>
+    <button data-tab="journal" data-i="journal"></button>
+  </nav>
+
+  <!-- ================= TODAY ================= -->
+  <section id="today">
+    <div class="daynav">
+      <button id="prevDay" aria-label="Previous day">‹</button>
+      <div><b id="viewLabel"></b><span id="pastHint" class="hidden" data-i="pastHint"></span></div>
+      <button id="nextDay" aria-label="Next day">›</button>
+    </div>
+    <div class="card love">
+      <div class="label" data-i="loveLabel"></div>
+      <div class="serif" id="love"></div>
+    </div>
+
+    <div class="card note hidden" id="noteCard">
+      <div class="label" id="noteFrom"></div>
+      <p id="noteText"></p>
+    </div>
+
+    <div class="summary">
+      <div><b id="sRoutine">0/10</b><span data-i="sRoutine"></span></div>
+      <div><b id="sWater">0/8</b><span data-i="sWater"></span></div>
+      <div><b id="sTasks">0/0</b><span data-i="sTasks"></span></div>
+    </div>
+
+    <div class="card">
+      <h2><span data-i="routineTitle"></span> <small id="routinePct">0%</small></h2>
+      <div id="routine"></div>
+    </div>
+
+    <div class="card">
+      <h2><span data-i="waterTitle"></span> <small id="waterTxt">0 / 8</small></h2>
+      <div class="water" id="water"></div>
+      <div class="wgoal"><span data-i="goal"></span> <button id="wMinus">−</button><b id="wGoal">8</b><button id="wPlus">+</button> <span data-i="glasses"></span></div>
+    </div>
+
+    <div class="card challenge">
+      <div class="label" style="color:var(--rose)" data-i="challengeLabel"></div>
+      <p id="challenge"></p>
+      <button class="pill" id="challengeBtn"></button>
+    </div>
+
+    <div class="card tip">
+      <div class="label" style="color:var(--lav)" data-i="tipLabel"></div>
+      <b id="tipTitle"></b>
+      <p id="tipBody"></p>
+      <button class="calm" id="calmBtn" data-i="calmBtn"></button>
+    </div>
+
+    <div class="card">
+      <h2 data-i="checkinTitle"></h2>
+      <div id="form">
+        <div class="block">
+          <div class="q" data-i="moodQ"></div>
+          <div class="moods" id="moods">
+            <button data-v="1">😔</button><button data-v="2">😕</button><button data-v="3">😐</button>
+            <button data-v="4">🙂</button><button data-v="5">😊</button>
+          </div>
+        </div>
+        <div id="dailyQs"></div>
+        <div class="block good">
+          <div class="q" data-i="goodQ"></div>
+          <input id="g1" data-ph="good1" maxlength="120">
+          <input id="g2" data-ph="good2" maxlength="120">
+          <input id="g3" data-ph="good3" maxlength="120">
+        </div>
+        <div class="block">
+          <div class="q" data-i="learnedQ"></div>
+          <p class="hint" data-i="learnedHint"></p>
+          <div class="toggle">
+            <button class="on" data-mode="text" data-i="write"></button>
+            <button data-mode="voice" data-i="voice"></button>
+          </div>
+          <div id="textMode"><textarea id="text" data-ph="textPh"></textarea></div>
+          <div id="voiceMode" class="hidden">
+            <div class="rec" id="recWrap">
+              <button class="recbtn" id="recBtn" aria-label="Record">🎙️</button>
+              <div class="status" id="recStatus"></div>
+            </div>
+            <div id="playback" class="hidden">
+              <audio id="audio" controls></audio>
+              <div style="text-align:center;margin-top:6px"><button class="link" id="delAudio" data-i="delRec"></button></div>
+            </div>
+          </div>
+        </div>
+        <button class="btn" id="save" disabled data-i="save"></button>
+      </div>
+      <div class="done hidden" id="done">
+        <div class="big">🌸</div>
+        <h2 data-i="thanks"></h2>
+        <p id="doneMsg"></p>
+        <p style="margin-top:12px"><button class="link" id="edit" data-i="edit"></button></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= TASKS ================= -->
+  <section id="tasks" class="hidden">
+    <div class="card">
+      <h2><span data-i="todayTasks"></span> <small id="dailyCount">0/0</small></h2>
+      <div id="dailyList"></div>
+      <form class="addrow" data-kind="daily"><input data-ph="addDaily" maxlength="80"><button>+</button></form>
+    </div>
+    <div class="card">
+      <h2><span data-i="weekTasks"></span> <small id="weeklyCount">0/0</small></h2>
+      <div id="weeklyList"></div>
+      <form class="addrow" data-kind="weekly"><input data-ph="addWeekly" maxlength="80"><button>+</button></form>
+    </div>
+    <p class="foot" style="margin-top:0" data-i="rollNote"></p>
+  </section>
+
+  <!-- ================= PROGRESS ================= -->
+  <section id="progress" class="hidden">
+    <div class="card">
+      <div class="hero">
+        <div class="ring">
+          <svg width="110" height="110" viewBox="0 0 110 110">
+            <defs><linearGradient id="g" x1="0" x2="1"><stop offset="0" stop-color="#e7739f"/><stop offset="1" stop-color="#a98bdc"/></linearGradient></defs>
+            <circle cx="55" cy="55" r="46" fill="none" stroke="var(--track)" stroke-width="12"/>
+            <circle id="ringArc" cx="55" cy="55" r="46" fill="none" stroke="url(#g)" stroke-width="12" stroke-linecap="round"
+              stroke-dasharray="289" stroke-dashoffset="289" style="transition:stroke-dashoffset .6s"/>
+          </svg>
+          <div><b id="overall">0%</b><span data-i="thisWeek"></span></div>
+        </div>
+        <p id="insight"></p>
+      </div>
+    </div>
+    <div class="stats">
+      <div class="stat"><b id="streak">0</b><span data-i="streak"></span></div>
+      <div class="stat"><b id="avgMood">–</b><span data-i="avgMood"></span></div>
+      <div class="stat"><b id="avgWater">0</b><span data-i="perDay"></span></div>
+    </div>
+    <div class="card">
+      <h2 data-i="last7"></h2>
+      <div class="days" id="days"></div>
+      <p class="hint" style="margin:10px 0 0;text-align:center" data-i="barsHint"></p>
+    </div>
+    <div class="card">
+      <h2 data-i="howDoing"></h2>
+      <div id="aspects"></div>
+    </div>
+  </section>
+
+  <!-- ================= JOURNAL ================= -->
+  <section id="journal" class="hidden">
+    <div class="card">
+      <h2 data-i="noteTitle"></h2>
+      <p class="hint" data-i="noteHint"></p>
+      <input id="nTitle" data-ph="noteTitlePh" maxlength="80" style="margin-bottom:10px">
+      <div class="toggle">
+        <button class="on" data-nmode="text" data-i="write"></button>
+        <button data-nmode="voice" data-i="voice"></button>
+      </div>
+      <div id="nTextMode"><textarea id="nText" data-ph="notePh"></textarea></div>
+      <div id="nVoiceMode" class="hidden">
+        <div class="rec" id="nRecWrap">
+          <button class="recbtn" id="nRecBtn" aria-label="Record">🎙️</button>
+          <div class="status" id="nRecStatus"></div>
+        </div>
+        <div id="nPlayback" class="hidden">
+          <audio id="nAudio" controls></audio>
+          <div style="text-align:center;margin-top:6px"><button class="link" id="nDelAudio" data-i="delRec"></button></div>
+        </div>
+      </div>
+      <button class="btn" id="nSave" style="margin-top:12px" data-i="noteSave"></button>
+    </div>
+    <div id="entries"></div>
+  </section>
+
+  <div class="foot" data-i="foot"></div>
+</div>
+
+<div id="toast"></div>
+
+<!-- breathing overlay -->
+<div id="breathe" class="hidden">
+  <div id="bText"></div>
+  <div class="orb" id="orb"></div>
+  <div id="bSub"></div>
+  <div class="bbtns">
+    <button id="bAgain" class="hidden" data-i="again"></button>
+    <button id="bClose" data-i="close"></button>
+  </div>
+</div>
+
+<script>
+/* =====================================================================
+   ✏️  NOTES FROM YOU — edit these. One shows up every 3rd day.
+   ===================================================================== */
+const FROM = "Eyuel";
+const MY_NOTES = [
+  // On hold for now. Add messages here later, e.g. "You've got this!",
+];
+
+/* ================= translations ================= */
+const T = {
+en:{
+  today:"Today", tasks:"Tasks", progress:"Progress", journal:"Journal",
+  welcomeTitle:"Welcome to your little daily space 🌸", welcomeBody:"Tick off your routine, keep track of your tasks, and check in with yourself. Your entries are stored in this browser, without an account.",
+  namePh:"What should I call you?", start:"Start",
+  dateToday:"Today", pastHint:"You're filling in a past day 🗓️", saved:"Saved ✓",
+  noteTitle:"Write anything ✍️", noteHint:"Thoughts, feelings, plans, a prayer, a dream… anything at all.", noteTitlePh:"Title (optional)",
+  notePh:"What's on your heart…", noteSave:"Save note", deleteQ:"Delete?", del:"Delete", checkinTag:"🌷 Check-in", noteTag:"📝 Note",
+  morning:"Good morning", afternoon:"Good afternoon", evening:"Good evening",
+  sRoutine:"routine", sWater:"glasses", sTasks:"tasks today",
+  loveLabel:"For you today 💕", noteFrom:"💌 A note from",
+  routineTitle:"Daily routine", waterTitle:"Water 💧", goal:"Daily goal", glasses:"glasses",
+  challengeLabel:"Today's self-love challenge 💝", challengeBtn:"I did it!", challengeDid:"Done 💕",
+  tipLabel:"Feelings tip 🌿", calmBtn:"I need to calm down 🫧",
+  checkinTitle:"Daily check-in 🌷", moodQ:"How are you feeling right now?",
+  goodQ:"One small thing that felt okay (optional)", good1:"Something that made you smile…", good2:"Something you did well…", good3:"Something you're thankful for…",
+  learnedQ:"Anything you want to put down here? (optional)", learnedHint:"Write it or say it, whichever feels easier.",
+  write:"✍️ Write", voice:"🎙️ Voice note", textPh:"Just a few words is enough…",
+  tapRec:"Tap to start recording", recording:"Recording…", tapStop:"tap to stop", delRec:"Delete and record again",
+  noMic:"I couldn't reach the microphone. Please allow mic access, or write instead.",
+  noVoice:"Voice notes don't work in this browser. Try Chrome or Safari, or write instead.",
+  save:"Save my check-in", thanks:"Thank you for showing up for yourself.", edit:"Edit check-in",
+  todayTasks:"Today's tasks", weekTasks:"This week", addDaily:"Add a task for today…", addWeekly:"Add a task for this week…",
+  noTasks:"Nothing yet. Add something small 🌱", rollNote:"Unfinished tasks move forward to the next day or week by themselves.",
+  thisWeek:"this week", streak:"day streak", avgMood:"avg mood", perDay:"glasses / day", last7:"Last 7 days",
+  barsHint:"Bars show how much of your routine you did · faces show your mood", howDoing:"How you're doing",
+  journalEmpty:"Your check-ins will show up here 🌷", learned:"What I learned", goodThings:"Good things", challengeTag:"💝 Self-love challenge done",
+  foot:"Saved in this browser. You choose what to share.",
+  breatheIn:"Breathe in…", hold:"Hold…", breatheOut:"Breathe out…", calmDone:"Well done. You came back to yourself 💕",
+  calmSub:"Follow the circle. 5 slow breaths.", close:"Close", again:"Again",
+  prayer:"Prayer", meals:"Meals", health:"Health & self-care",
+  aPrayer:"🙏 Prayer", aMeals:"🍽️ Meals", aWater:"💧 Water", aHealth:"🌿 Health & self-care", aChallenge:"💝 Self-love", aTasks:"✅ Tasks", aCheckins:"🌷 Check-ins",
+  nGlasses:n=>`${n} glasses`, nTasks:(d,o)=>`${d} done · ${o} open`, noTasksYet:"no tasks yet",
+  insight:(b,l)=>`You're doing beautifully with <b>${b}</b> 💕<br>A gentle focus for the next few days: <b>${l}</b>.`,
+  balance:"You're keeping a lovely balance 💕 Keep going, one day at a time.", insightEmpty:"Start ticking things off and your progress will show up here 🌱",
+  encHeavy:"If that thought comes back tonight, remind yourself: you've already put it down here. It can wait until tomorrow.",
+  encLow:"Hard days happen, and you still showed up. That says a lot about you 💕",
+  encGood:"Look at you! Keep shining. See you tomorrow 💕", encMid:"Small, steady check-ins add up. You've got this 💕"
+},
+am:{
+  today:"ዛሬ", tasks:"ስራዎች", progress:"እድገት", journal:"ማስታወሻ",
+  welcomeTitle:"ወደ ትንሿ የዕለት ቦታሽ እንኳን ደህና መጣሽ 🌸", welcomeBody:"የዕለት ልማዶችሽን ምልክት አድርጊ፣ ስራዎችሽን ተከታተዪ፣ ስለራስሽም አስቢ። ሁሉም ነገር በዚህ ስልክ ላይ ብቻ ይቀመጣል።",
+  namePh:"ማን ብዬ ልጥራሽ?", start:"ጀምሪ",
+  dateToday:"ዛሬ", pastHint:"ያለፈ ቀን እየሞላሽ ነው 🗓️", saved:"ተቀምጧል ✓",
+  noteTitle:"የፈለግሽውን ጻፊ ✍️", noteHint:"ሀሳብ፣ ስሜት፣ እቅድ፣ ጸሎት፣ ህልም… ማንኛውንም ነገር።", noteTitlePh:"ርዕስ (ካስፈለገ)",
+  notePh:"ልብሽ ውስጥ ያለውን ጻፊ…", noteSave:"አስቀምጪ", deleteQ:"ይሰረዝ?", del:"ሰርዝ", checkinTag:"🌷 የዕለት ቆይታ", noteTag:"📝 ማስታወሻ",
+  morning:"እንደምን አደርሽ", afternoon:"እንደምን ዋልሽ", evening:"እንደምን አመሸሽ",
+  sRoutine:"ልማድ", sWater:"ብርጭቆ", sTasks:"የዛሬ ስራዎች",
+  loveLabel:"የእለቱ መልዕክት 💕", noteFrom:"💌 መልዕክት ከ",
+  routineTitle:"የዕለት ልማድ", waterTitle:"ውሃ 💧", goal:"የቀን ግብ", glasses:"ብርጭቆ",
+  challengeLabel:"የዛሬ ራስን የመውደድ ፈተና 💝", challengeBtn:"አደረግሁት!", challengeDid:"ተጠናቀቀ 💕",
+  tipLabel:"የስሜት ምክር 🌿", calmBtn:"መረጋጋት እፈልጋለሁ 🫧",
+  checkinTitle:"የዕለት ቆይታ ከራሴ ጋር 🌷", moodQ:"አሁን ምን ይሰማሻል?",
+  goodQ:"ከዛሬ 3 መልካም ነገሮች", good1:"ፈገግ ያሰኘሽ ነገር…", good2:"በደንብ የሰራሽው ነገር…", good3:"የምታመሰግኚበት ነገር…",
+  learnedQ:"ዛሬ የተማርሽው በጣም አስፈላጊ ነገር ምንድነው?", learnedHint:"ጻፊው ወይም ተናገሪው፤ የቀለለሽን ምረጪ።",
+  write:"✍️ ጻፊ", voice:"🎙️ በድምፅ", textPh:"ጥቂት ቃላት በቂ ናቸው…",
+  tapRec:"ለመቅዳት ተጫኚ", recording:"እየተቀዳ ነው…", tapStop:"ለማቆም ተጫኚ", delRec:"ሰርዘሽ እንደገና ቅጂ",
+  noMic:"ማይክሮፎኑን ማግኘት አልቻልኩም። እባክሽ ፍቀጂ፣ ወይም በጽሁፍ ጻፊ።",
+  noVoice:"በዚህ ብራውዘር የድምፅ መልዕክት አይሰራም። Chrome ወይም Safari ሞክሪ፣ ወይም ጻፊ።",
+  save:"አስቀምጪ", thanks:"ለራስሽ ጊዜ ስለሰጠሽ አመሰግናለሁ።", edit:"አስተካክዪ",
+  todayTasks:"የዛሬ ስራዎች", weekTasks:"የዚህ ሳምንት", addDaily:"ለዛሬ ስራ ጨምሪ…", addWeekly:"ለዚህ ሳምንት ስራ ጨምሪ…",
+  noTasks:"ገና ምንም የለም። ትንሽ ነገር ጨምሪ 🌱", rollNote:"ያልተጠናቀቁ ስራዎች በራሳቸው ወደሚቀጥለው ቀን ወይም ሳምንት ይሸጋገራሉ።",
+  thisWeek:"በዚህ ሳምንት", streak:"ተከታታይ ቀናት", avgMood:"አማካይ ስሜት", perDay:"ብርጭቆ / በቀን", last7:"ያለፉት 7 ቀናት",
+  barsHint:"አሞሌዎቹ ምን ያህል ልማድ እንደሰራሽ ያሳያሉ · ፊቶቹ ስሜትሽን", howDoing:"እንዴት እየሄድሽ ነው",
+  journalEmpty:"ማስታወሻዎችሽ እዚህ ይታያሉ 🌷", learned:"የተማርኩት", goodThings:"መልካም ነገሮች", challengeTag:"💝 ራስን የመውደድ ፈተና ተጠናቀቀ",
+  foot:"ሁሉም ነገር በዚህ ስልክ ላይ በሚስጥር ይቀመጣል 🔒",
+  breatheIn:"ወደ ውስጥ ተንፍሺ…", hold:"ያዢ…", breatheOut:"ቀስ ብለሽ አውጪ…", calmDone:"በጣም ጥሩ። ወደ ራስሽ ተመለስሽ 💕",
+  calmSub:"ክቡን ተከተዪ። 5 ቀስ ያሉ ትንፋሾች።", close:"ዝጊ", again:"እንደገና",
+  prayer:"ጸሎት", meals:"ምግብ", health:"ጤና እና ራስን መንከባከብ",
+  aPrayer:"🙏 ጸሎት", aMeals:"🍽️ ምግብ", aWater:"💧 ውሃ", aHealth:"🌿 ጤና", aChallenge:"💝 ራስን መውደድ", aTasks:"✅ ስራዎች", aCheckins:"🌷 ማስታወሻ",
+  nGlasses:n=>`${n} ብርጭቆ`, nTasks:(d,o)=>`${d} ተጠናቀቀ · ${o} ቀሪ`, noTasksYet:"ገና ስራ የለም",
+  insight:(b,l)=>`በ<b>${b}</b> በጣም ጥሩ እየሄድሽ ነው 💕<br>ለሚቀጥሉት ቀናት በእርጋታ ትኩረት የምትሰጪው፦ <b>${l}</b>።`,
+  balance:"ጥሩ ሚዛን ይዘሻል 💕 ቀን በቀን ቀጥዪ።", insightEmpty:"ነገሮችን ምልክት ማድረግ ስትጀምሪ እድገትሽ እዚህ ይታያል 🌱",
+  encHeavy:"ያ ሀሳብ ማታ ቢመለስ፣ እዚህ እንዳስቀመጥሽው አስታውሺ። እስከ ነገ ሊጠብቅ ይችላል።",
+  encLow:"ከባድ ቀናት ይመጣሉ፣ አንቺ ግን ዛሬም መጣሽ። ይህ ስለ አንቺ ብዙ ይናገራል 💕",
+  encGood:"ተመልከቺ ራስሽን! ማብራትሽን ቀጥዪ። ነገ እንገናኝ 💕", encMid:"ትንንሽ የዕለት እርምጃዎች ይደመራሉ። ትችያለሽ 💕"
+}};
+
+/* ================= daily content (en / am) ================= */
+const LOVE = [
+  ["You've got this. Whatever today brings, you are stronger than you think.","ትችያለሽ! ዛሬ ምንም ቢመጣ ከምታስቢው በላይ ጠንካራ ነሽ።"],
+  ["You deserve good things, not because you earn them, but because you are you.","መልካም ነገሮች ይገቡሻል፤ ስለሰራሽላቸው ሳይሆን አንቺ ስለሆንሽ።"],
+  ["Your kindness makes people's days better, even when you don't see it.","ደግነትሽ የሰዎችን ቀን ያሳምራል፣ ባታይው እንኳ።"],
+  ["Rest is part of the day too. You don't have to prove anything today.","እረፍትም የቀኑ አካል ነው። ዛሬ ምንም ማረጋገጥ የለብሽም።"],
+  ["You can care about your work without carrying everything yourself.","ነገሮችን በትክክል ለመስራት የምትጨነቂበት መንገድ ልብሽ ምን ያህል ትልቅ እንደሆነ ያሳያል።"],
+  ["You deserve the same love you give to everyone else.","ለሌሎች የምትሰጪውን ፍቅር አንቺም ይገባሻል።"],
+  ["You are enough, exactly as you are today.","ዛሬ ባለሽበት ሁኔታ፣ እንዳለሽ በቂ ነሽ።"],
+  ["Your feelings make sense. You're learning to hold them gently.","ስሜቶችሽ ትርጉም አላቸው። በእርጋታ መያዝን እየተማርሽ ነው።"],
+  ["You are growing, even on the days it doesn't feel like it.","ባይሰማሽም እንኳ በየቀኑ እያደግሽ ነው።"],
+  ["Someone out there is so grateful you exist. Yes, really.","አንቺ በመኖርሽ በጣም የሚደሰት ሰው አለ። አዎ፣ በእውነት።"],
+  ["You deserve more than you settle for. Aim high, you've got this.","ከምትቀበይው በላይ ይገባሻል። ከፍ ብለሽ አልሚ፣ ትችያለሽ!"],
+  ["Your mistakes don't define you. Your courage to keep going does.","ስህተቶችሽ አይገልጹሽም፤ የሚገልጽሽ ለመቀጠል ያለሽ ድፍረት ነው።"],
+  ["You bring something to this world that no one else can.","ማንም ሊያመጣው የማይችለውን ነገር ለዚህ ዓለም ታመጫለሽ።"],
+  ["Be proud of how far you've come. Look back for a second.","እስካሁን በደረስሽበት ኩሪ። ለአፍታ ወደ ኋላ ተመልከቺ።"]
+];
+const CHALLENGES = [
+  ["Buy yourself a small treat you love. No reason needed.","የምትወጂውን ትንሽ ነገር ለራስሽ ግዢ። ምክንያት አያስፈልግም።"],
+  ["Wear something that makes you feel beautiful.","ቆንጆ እንደሆንሽ እንዲሰማሽ የሚያደርግ ልብስ ልበሺ።"],
+  ["Say 'no' to one thing you don't want to do.","ማድረግ የማትፈልጊውን አንድ ነገር 'አይ' በዪ።"],
+  ["Write down one thing you like about yourself.","ስለራስሽ የምትወጂውን አንድ ነገር ጻፊ።"],
+  ["Take 15 minutes just for you. No phone, no chores.","ለራስሽ ብቻ 15 ደቂቃ ውሰጂ። ስልክ የለም፣ ስራ የለም።"],
+  ["Try something new: a food, a song, or a walk somewhere different.","አዲስ ነገር ሞክሪ፦ ምግብ፣ ዘፈን ወይም በአዲስ መንገድ የእግር ጉዞ።"],
+  ["Compliment yourself in the mirror. Out loud.","በመስታወት ፊት ራስሽን አድንቂ። ጮክ ብለሽ።"],
+  ["Let someone else fix their own mistake today.","ዛሬ ሌላ ሰው የራሱን ስህተት ራሱ እንዲያስተካክል ተዪው።"],
+  ["Make your favourite drink and enjoy it slowly.","የምትወጂውን መጠጥ አዘጋጅተሽ ቀስ ብለሽ ተደሰቺበት።"],
+  ["Share your opinion once today, even if others disagree.","ሌሎች ባይስማሙም ዛሬ አንድ ጊዜ ሀሳብሽን ተናገሪ።"]
+];
+const TIPS = [
+  [["Name it to tame it","When a strong feeling comes, name it: \"I feel hurt.\" Naming a feeling helps it calm down."],
+   ["ስሜትሽን ሰይሚው","ጠንካራ ስሜት ሲመጣ ስሙን ጥሪው፦ \"ተጎድቻለሁ\"። ስሜትን መሰየም እንዲረጋጋ ይረዳል።"]],
+  [["Give the feeling room","Feelings can take time to settle. Try a short pause and notice what you need; there is no deadline to feel better."],
+   ["የ90 ሰከንድ ማዕበል","ብዙ ስሜቶች ዝም ብለሽ ስትተነፍሺ በ90 ሰከንድ ገደማ ከፍ ብለው ያልፋሉ።"]],
+  [["Pause before you reply","When someone upsets you, say \"Let me think about that\" and come back to it later."],
+   ["ከመመለስሽ በፊት ቆም በዪ","አንድ ሰው ሲያስከፋሽ \"ላስብበት\" በዪና በኋላ ተመለሺበት።"]],
+  [["5-4-3-2-1","Notice 5 things you see, 4 you can touch, 3 you hear, 2 you smell and 1 you taste. It brings you back to now."],
+   ["5-4-3-2-1","የምታዪውን 5፣ የምትነኪውን 4፣ የምትሰሚውን 3፣ የምታሸቺውን 2፣ የምትቀምሺውን 1 ነገር አስተውዪ። ወደ አሁኑ ጊዜ ይመልስሻል።"]],
+  [["Worry time","Give worries a 10-minute slot in the afternoon. If one shows up at night, tell it: \"Tomorrow afternoon.\""],
+   ["የጭንቀት ሰዓት","ለጭንቀቶች ከሰዓት በኋላ 10 ደቂቃ ስጪያቸው። ማታ ቢመጡ \"ነገ ከሰዓት በኋላ\" በዪያቸው።"]],
+  [["Fact or feeling?","Ask: \"What do I know for sure, and what am I guessing?\" Feelings are real, but they aren't always facts."],
+   ["እውነታ ወይስ ስሜት?","ራስሽን ጠይቂ፦ \"በእርግጠኝነት የማውቀው ምንድነው? የምገምተውስ?\" ስሜቶች እውነተኛ ናቸው፣ ግን ሁልጊዜ እውነታ አይደሉም።"]],
+  [["Move it out","A 5-minute walk or a good stretch releases the tension your body is holding."],
+   ["በእንቅስቃሴ አውጪው","የ5 ደቂቃ የእግር ጉዞ ወይም መዘርጋት ሰውነትሽ የያዘውን ውጥረት ይለቃል።"]],
+  [["Talk to yourself like a friend","What would you say to a friend who felt this way? Say exactly that to yourself."],
+   ["ራስሽን እንደ ጓደኛ አናግሪ","እንዲህ ለሚሰማት ጓደኛሽ ምን ትያት ነበር? ያንኑ ለራስሽ በዪ።"]],
+  [["Write it out","Write the upsetting thought on paper. Seeing it outside your head makes it smaller."],
+   ["ጻፊው","የሚያስጨንቅሽን ሀሳብ በወረቀት ጻፊው። ከጭንቅላትሽ ውጭ ማየቱ ያሳንሰዋል።"]],
+  [["Slow breathing","Breathe in for 4, hold for 4, breathe out for 6. A longer out-breath tells your body it's safe."],
+   ["ቀስ ያለ አተነፋፈስ","በ4 ተንፍሺ፣ 4 ያዢ፣ በ6 አውጪ። ረዘም ያለ ማውጣት ሰውነትሽ ደህና እንደሆነ ይነግረዋል።"]]
+];
+const QUESTIONS = [
+  {id:"sleep", en:["How did you sleep last night?",["Rested","Okay","My mind kept me up"]], am:["ትናንት ማታ እንዴት ተኛሽ?",["በደንብ አረፍኩ","ደህና ነው","ሀሳብ እንቅልፍ ነሳኝ"]]},
+  {id:"kind", en:["Did you speak to yourself kindly today?",["Yes","Mostly","Not really"]], am:["ዛሬ ራስሽን በደግነት አናገርሽ?",["አዎ","በአብዛኛው","ብዙም አይደለም"]]},
+  {id:"pause", en:["When something upset you, could you pause before reacting?",["Yes","Partly","Not today","Nothing upset me"]], am:["አንድ ነገር ሲያስከፋሽ ከመመለስሽ በፊት ቆም ማለት ቻልሽ?",["አዎ","በከፊል","ዛሬ አልቻልኩም","ምንም አላስከፋኝም"]]},
+  {id:"carry", en:["Is there a thought you're still carrying from today?",["No, I let it go","A little","Yes, it's heavy"]], am:["ከዛሬ አሁንም የተሸከምሽው ሀሳብ አለ?",["የለም፣ ተውኩት","ትንሽ","አዎ፣ ከባድ ነው"]]},
+  {id:"proud", en:["Did you do something today you're proud of?",["Yes!","Something small","Not today"]], am:["ዛሬ የምትኮሪበት ነገር አደረግሽ?",["አዎ!","ትንሽ ነገር","ዛሬ አይደለም"]]},
+  {id:"opinion", en:["Did someone's opinion bother you today?",["Not at all","A little","A lot"]], am:["ዛሬ የአንድ ሰው አስተያየት አስጨንቆሽ ነበር?",["በፍጹም","ትንሽ","በጣም"]]},
+  {id:"spoke", en:["Did you say what you really felt today?",["Yes","Partly","I kept quiet"]], am:["ዛሬ የተሰማሽን በትክክል ተናገርሽ?",["አዎ","በከፊል","ዝም አልኩ"]]},
+  {id:"energy", en:["How is your energy today?",["Full","Okay","Low"]], am:["ዛሬ ጉልበትሽ እንዴት ነው?",["ሙሉ ነው","ደህና","ዝቅ ያለ"]]},
+  {id:"mistake", en:["If you made a mistake today, how did you treat yourself?",["Gently","A bit hard","Very hard","No mistakes"]], am:["ዛሬ ስህተት ከሰራሽ ራስሽን እንዴት ያዝሽ?",["በርህራሄ","ትንሽ ከበድኩበት","በጣም ከበድኩበት","ስህተት አልሰራሁም"]]},
+  {id:"enjoy", en:["Did you do something just because you enjoy it?",["Yes","Not today"]], am:["የምትደሰቺበትን ነገር ለራስሽ ብለሽ አደረግሽ?",["አዎ","ዛሬ አይደለም"]]},
+  {id:"others", en:["Did you take on someone else's responsibility today?",["No","A little","Yes"]], am:["ዛሬ የሌላ ሰውን ኃላፊነት ተሸከምሽ?",["አይ","ትንሽ","አዎ"]]},
+  {id:"calm", en:["How calm did you feel today overall?",["Very calm","Up and down","Stressed"]], am:["በአጠቃላይ ዛሬ ምን ያህል ረጋ ብለሽ ነበር?",["በጣም ረጋ ብዬ","ከፍ ዝቅ","ተጨንቄ"]]},
+  {id:"open", en:["Were you open to another point of view today?",["Yes","I tried","Not really"]], am:["ዛሬ የሌሎችን ሀሳብ ለመስማት ክፍት ነበርሽ?",["አዎ","ሞከርኩ","ብዙም አይደለም"]]},
+  {id:"body", en:["Did you listen to what your body needed today?",["Yes","Partly","No"]], am:["ዛሬ ሰውነትሽ የፈለገውን አዳመጥሽ?",["አዎ","በከፊል","አይ"]]}
+];
+const ROUTINE = [
+  {g:"prayer", items:[["prayAM","🌅","Morning prayer","የጠዋት ጸሎት"],["prayPM","🌙","Evening prayer","የማታ ጸሎት"]]},
+  {g:"meals", items:[["breakfast","🥐","Breakfast","ቁርስ"],["lunch","🥗","Lunch","ምሳ"],["dinner","🍲","Dinner","እራት"]]},
+  {g:"health", items:[["exercise","🚶‍♀️","Exercise or a walk","የአካል እንቅስቃሴ ወይም የእግር ጉዞ"],["sleptOnTime","😴","Slept on time last night","ትናንት በሰዓቱ ተኛሁ"],
+    ["selfcare","🧴","Skincare / self-care","የቆዳ እንክብካቤ / ራስን መንከባከብ"],["family","💞","Family time","ከቤተሰብ ጋር ጊዜ"],["oneThing","⭐","Got one thing done","አንድ ነገር ጨረስኩ"]]}
+];
+const ALL_ITEMS = ROUTINE.flatMap(g=>g.items.map(i=>i[0]));
+const MOODS = {1:"😔",2:"😕",3:"😐",4:"🙂",5:"😊"};
+
+/* ================= settings ================= */
+const LS = "novi:"; // own storage space, separate from other pages on this site
+const lsGet = k => { try{ return localStorage.getItem(LS+k); }catch(e){ return null; } };
+const lsSet = (k,v) => { try{ localStorage.setItem(LS+k,v); }catch(e){} };
+let lang = lsGet("lang") || "en";
+const L = () => lang==="am" ? 1 : 0;
+const t = k => T[lang][k];
+const LOC = () => lang==="am" ? "am-ET" : undefined;
+
+/* ================= dates ================= */
+const pad = n => String(n).padStart(2,"0");
+const keyOf = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const fromKey = k => { const [y,m,d] = k.split("-").map(Number); return new Date(y,m-1,d); };
+const numOf = k => { const d = fromKey(k); return Math.floor(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())/864e5); };
+const DAY_START_HOUR = 4;
+const dayNow = () => new Date(Date.now() - DAY_START_HOUR*3600*1000);
+let now = dayNow();
+let TODAY = keyOf(now);
+let WEEK = (()=>{ const d = new Date(now); d.setDate(d.getDate()-((d.getDay()+6)%7)); return keyOf(d); })();
+const lastDays = n => Array.from({length:n},(_,i)=>{ const d = new Date(now); d.setDate(d.getDate()-(n-1-i)); return keyOf(d); });
+const MAX_BACK = 30;
+let VIEW = TODAY;                      // the day being filled in on the Today tab
+const vNum = () => numOf(VIEW);
+const pick = (arr, salt=0) => arr[(vNum() + salt) % arr.length];
+const viewQs = () => [0,1,2].map(i=>QUESTIONS[(vNum()*3 + i) % QUESTIONS.length]);
+
+/* ================= storage ================= */
+const S = {days:{}, tasks:[], notes:[]};
+let db = null;
+function openDB(){
+  return new Promise(res=>{
+    try{
+      const r = indexedDB.open("novi-day",2);
+      r.onupgradeneeded = () => {
+        const x = r.result;
+        if(!x.objectStoreNames.contains("days")) x.createObjectStore("days",{keyPath:"date"});
+        if(!x.objectStoreNames.contains("tasks")) x.createObjectStore("tasks",{keyPath:"id"});
+        if(!x.objectStoreNames.contains("notes")) x.createObjectStore("notes",{keyPath:"id"});
+      };
+      r.onsuccess = () => res(r.result); r.onerror = () => res(null);
+    }catch(e){ res(null); }
+  });
+}
+const getAll = store => new Promise((res,reject)=>{
+  try{ const r = db.transaction(store).objectStore(store).getAll(); r.onsuccess=()=>res(r.result||[]); r.onerror=()=>reject(r.error); }catch(e){ reject(e); }
+});
+async function writeRecord(store, value, remove=false){
+  if(!db){ storageProblem(); return false; }
+  return new Promise(resolve=>{
+    try{
+      const tx=db.transaction(store,"readwrite");
+      if(remove) tx.objectStore(store).delete(value); else tx.objectStore(store).put(value);
+      tx.oncomplete=()=>resolve(true);
+      tx.onerror=tx.onabort=()=>{ storageProblem(); resolve(false); };
+    }catch(e){ storageProblem(); resolve(false); }
+  });
+}
+const put = (store,obj)=>writeRecord(store,obj);
+const del = (store,key)=>writeRecord(store,key,true);
+function day(k=VIEW){ if(!S.days[k]) S.days[k] = {date:k, routine:{}, water:0}; if(!S.days[k].routine) S.days[k].routine = {}; return S.days[k]; }
+async function saveDay(d, quiet){ const ok=await put("days",d); S.days[d.date]=d; if(ok && !quiet) toast(); return ok; }
+let waterGoal = Number(lsGet("water-goal")) || 8;
+const esc = s => { const x = document.createElement("div"); x.textContent = s; return x.innerHTML; };
+let toastT;
+function toast(msg){
+  const el = document.getElementById("toast"); el.textContent = msg || t("saved"); el.classList.add("show");
+  clearTimeout(toastT); toastT = setTimeout(()=>el.classList.remove("show"), 1300);
+}
+
+/* ================= theme ================= */
+function applyTheme(th){
+  document.documentElement.dataset.theme = th;
+  document.getElementById("themeBtn").textContent = th==="dark" ? "☀️" : "🌙";
+  document.querySelector('meta[name=theme-color]').content = th==="dark" ? "#1d1520" : "#fdf0f4";
+}
+let theme = lsGet("theme") || ((window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches) ? "dark" : "light");
+applyTheme(theme);
+document.getElementById("themeBtn").onclick = () => { theme = theme==="dark" ? "light" : "dark"; lsSet("theme",theme); applyTheme(theme); };
+
+/* ================= voice recorder (reused by check-in and notes) ================= */
+const canRecord = !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia && window.MediaRecorder);
+function pickType(){ for(const ty of ["audio/webm;codecs=opus","audio/webm","audio/mp4","audio/aac"]){ try{ if(MediaRecorder.isTypeSupported(ty)) return ty; }catch(e){} } return ""; }
+const fmt = s => `${Math.floor(s/60)}:${pad(s%60)}`;
+const MAX_REC = 600; // 10 minutes
+// MediaRecorder files often have no length info, so players cut off or can't seek. Ask the player to measure it.
+document.addEventListener("loadedmetadata", e=>{
+  const a = e.target;
+  if(a && a.tagName==="AUDIO" && a.duration===Infinity){
+    a.currentTime = 1e101;
+    a.addEventListener("timeupdate", function fix(){ a.removeEventListener("timeupdate", fix); a.currentTime = 0; });
+  }
+}, true);
+function makeRecorder(p){
+  const $ = id => document.getElementById(p+id);
+  const btn = $("RecBtn") || $("recBtn"), status = $("RecStatus") || $("recStatus");
+  const wrap = $("RecWrap") || $("recWrap"), audioEl = $("Audio") || $("audio");
+  const R = {blob:null, rec:null, url:null};
+  let chunks = [], timer = null, secs = 0, stream = null, wake = null, note = "", lostMsg = "";
+  const tr = (en,am) => lang==="am" ? am : en;
+  const extra = document.createElement("button"); extra.type = "button"; extra.className = "link hidden";
+  const sel = document.createElement("select"); sel.className = "micsel hidden";
+  const tip = document.createElement("p"); tip.className = "mictip hidden";
+  wrap.append(extra, sel, tip);
+  if(!canRecord){ btn.disabled = true; btn.style.opacity = .4; }
+  const state = () => R.rec ? R.rec.state : "inactive";
+  let usingPhoneMic = false;
+  const isBT = label => /bluetooth|airpods|buds|headset|hands.?free|headphone|earphone|\bbt\b|wireless/i.test(label||"");
+  const inputs = async () => { try{ return (await navigator.mediaDevices.enumerateDevices()).filter(d=>d.kind==="audioinput"); }catch(e){ return []; } };
+  function ui(){
+    const s = state();
+    btn.classList.toggle("live", s==="recording");
+    btn.textContent = s==="recording" ? "■" : s==="paused" ? "▶" : "🎙️";
+    if(s==="recording") status.textContent = `${t("recording")} ${fmt(secs)} · ${t("tapStop")}`;
+    else if(s==="paused") status.textContent = (note ? note+" " : "") + `${tr("Paused","ቆሟል")} ${fmt(secs)} · ${tr("tap ▶ to continue","ለመቀጠል ▶ ተጫኚ")}`;
+    else status.textContent = canRecord ? t("tapRec") : t("noVoice");
+    extra.classList.toggle("hidden", s==="inactive");
+    extra.textContent = s==="recording" ? tr("Pause","ለአፍታ አቁሚ") : tr("Finish and keep recording","ጨርሺና አስቀምጪ");
+    tip.textContent = tip.dataset.mode==="phone"
+      ? tr("🎙️ Using your phone's microphone for a clear voice, even with earphones on. Hold the phone near you.",
+           "🎙️ ለግልጽ ድምፅ የስልኩ ማይክሮፎን እየተጠቀምን ነው። ስልኩን አቅርቢው።")
+      : tr("Earphone mics often sound less clear. If you can, pick your phone's microphone below.",
+           "የጆሮ ማዳመጫ ማይክሮፎን ብዙ ጊዜ ግልጽ አይደለም። ከተቻለ ከታች የስልኩን ማይክሮፎን ምረጪ።");
+    if(sel.options[0]) sel.options[0].textContent = tr("Microphone: automatic","ማይክሮፎን፦ ራስ-ሰር");
+  }
+  R.idleText = ui;
+  R.show = blob => {
+    R.blob = blob;
+    if(R.url) URL.revokeObjectURL(R.url); R.url = blob ? URL.createObjectURL(blob) : null;
+    if(R.url) audioEl.src = R.url; else audioEl.removeAttribute("src");
+    ($("Playback")||$("playback")).classList.toggle("hidden", !blob);
+    wrap.classList.toggle("hidden", !!blob);
+  };
+  async function listMics(){
+    try{
+      const ds = (await navigator.mediaDevices.enumerateDevices())
+        .filter(d=>d.kind==="audioinput" && d.label && !["default","communications"].includes(d.deviceId));
+      if(ds.length<2){ sel.classList.add("hidden"); return; }
+      sel.replaceChildren(new Option("", ""), ...ds.map(d=>new Option(d.label, d.deviceId)));
+      sel.value = ds.some(d=>d.deviceId===lsGet("mic-id")) ? lsGet("mic-id") : "";
+      sel.classList.remove("hidden"); ui();
+    }catch(e){}
+  }
+  sel.onchange = () => lsSet("mic-id", sel.value);
+  if(canRecord){ listMics(); try{ navigator.mediaDevices.addEventListener("devicechange", listMics); }catch(e){} }
+  const lock = async () => { try{ wake = await navigator.wakeLock.request("screen"); }catch(e){ wake = null; } };
+  const unlock = () => { try{ wake && wake.release(); }catch(e){} wake = null; };
+  const tick = () => { clearInterval(timer); timer = setInterval(()=>{ secs++; ui(); if(secs>=MAX_REC) R.rec.stop(); },1000); };
+  function pause(msg){
+    if(state()!=="recording") return;
+    try{ R.rec.requestData(); }catch(e){}
+    R.rec.pause(); clearInterval(timer); unlock(); note = msg || ""; ui();
+  }
+  function resume(){
+    const track = stream && stream.getAudioTracks()[0];
+    if(!track || track.readyState!=="live"){ lostMsg = tr("The microphone was taken away, so your recording was kept up to that point.","ማይክሮፎኑ ስለተወሰደ እስከዚያ ድረስ የተቀዳው ተቀምጧል።"); R.rec.stop(); return; }
+    R.rec.resume(); note = ""; tick(); lock(); ui();
+  }
+  async function start(){
+    // Like WhatsApp: no "call mode" processing (that switches Android to the Bluetooth call mic),
+    // and prefer the phone's own microphone even when earphones are connected.
+    const audio = {echoCancellation:false, noiseSuppression:false, autoGainControl:false, channelCount:{ideal:1}, sampleRate:{ideal:48000}};
+    let chosen = lsGet("mic-id");
+    if(!chosen){
+      let ds = await inputs();
+      if(!ds.some(d=>d.label)){ // first time: ask permission once so device names become visible
+        try{ const probe = await navigator.mediaDevices.getUserMedia({audio:true}); probe.getTracks().forEach(x=>x.stop()); }catch(e){ status.textContent = t("noMic"); return; }
+        ds = await inputs();
+      }
+      const phone = ds.find(d=>!isBT(d.label) && !["default","communications"].includes(d.deviceId));
+      if(phone && ds.some(d=>isBT(d.label))){ chosen = phone.deviceId; usingPhoneMic = true; } else usingPhoneMic = false;
+    }
+    if(chosen) audio.deviceId = {exact:chosen};
+    try{ stream = await navigator.mediaDevices.getUserMedia({audio}); }
+    catch(e){
+      if(chosen){ if(lsGet("mic-id")) lsSet("mic-id",""); delete audio.deviceId;
+        try{ stream = await navigator.mediaDevices.getUserMedia({audio}); }catch(e2){ status.textContent = t("noMic"); return; } }
+      else { status.textContent = t("noMic"); return; }
+    }
+    listMics();
+    const track = stream.getAudioTracks()[0];
+    tip.dataset.mode = usingPhoneMic ? "phone" : "bt";
+    tip.classList.toggle("hidden", !(usingPhoneMic || isBT(track.label)));
+    // A phone call (or another app) can mute or take the mic: pause, or keep what was recorded.
+    track.onmute = () => pause(tr("A call or another app used the microphone.","ጥሪ ወይም ሌላ መተግበሪያ ማይክሮፎኑን ተጠቀመ።"));
+    track.onended = () => { if(state()!=="inactive"){ lostMsg = tr("The microphone was taken away, so your recording was kept up to that point.","ማይክሮፎኑ ስለተወሰደ እስከዚያ ድረስ የተቀዳው ተቀምጧል።"); R.rec.stop(); } };
+    const ty = pickType();
+    try{ R.rec = new MediaRecorder(stream, Object.assign({audioBitsPerSecond:96000}, ty ? {mimeType:ty} : {})); }
+    catch(e){ R.rec = ty ? new MediaRecorder(stream,{mimeType:ty}) : new MediaRecorder(stream); }
+    chunks = [];
+    R.rec.ondataavailable = e => { if(e.data && e.data.size) chunks.push(e.data); };
+    R.rec.onstop = () => {
+      clearInterval(timer); unlock(); stream.getTracks().forEach(x=>x.stop()); note = "";
+      const blob = new Blob(chunks,{type:(R.rec && R.rec.mimeType) || ty || "audio/webm"});
+      ui(); R.show(blob.size ? blob : null);
+      if(!p && typeof persistDraft==="function") persistDraft();
+      if(lostMsg){ toast(lostMsg); lostMsg = ""; }
+    };
+    R.rec.start(1000);   // save a piece every second so an interruption never loses everything
+    secs = 0; note = ""; tick(); lock(); ui();
+  }
+  document.addEventListener("visibilitychange", () => {
+    if(document.hidden) pause(tr("You left the page.","ከገጹ ወጥተሽ ነበር።"));
+  });
+  btn.onclick = () => { const s = state(); if(s==="recording") R.rec.stop(); else if(s==="paused") resume(); else start(); };
+  extra.onclick = () => { const s = state(); if(s==="recording") pause(""); else if(s==="paused") R.rec.stop(); };
+  ($("DelAudio")||$("delAudio")).onclick = () => R.show(null);
+  return R;
+}
+const ciRec = makeRecorder("");
+const nRec = makeRecorder("n");
+function modeSwitch(attr, textId, voiceId){
+  const set = m => {
+    document.querySelectorAll(`[${attr}]`).forEach(b=>b.classList.toggle("on", b.getAttribute(attr)===m));
+    document.getElementById(textId).classList.toggle("hidden", m!=="text");
+    document.getElementById(voiceId).classList.toggle("hidden", m!=="voice");
+  };
+  document.querySelectorAll(`[${attr}]`).forEach(b=>b.onclick = () => set(b.getAttribute(attr)));
+  return set;
+}
+const setMode = modeSwitch("data-mode","textMode","voiceMode");
+const setNMode = modeSwitch("data-nmode","nTextMode","nVoiceMode");
+
+/* ================= language ================= */
+function applyLang(){
+  document.documentElement.lang = lang;
+  document.getElementById("langBtn").textContent = lang==="am" ? "EN" : "አማ";
+  document.querySelectorAll("[data-i]").forEach(el=>el.textContent = t(el.dataset.i));
+  document.querySelectorAll("[data-ph]").forEach(el=>el.placeholder = t(el.dataset.ph));
+  document.getElementById("date").textContent = now.toLocaleDateString(LOC(),{weekday:"long",day:"numeric",month:"long"});
+  setGreeting();
+  document.getElementById("noteFrom").textContent = `${t("noteFrom")} ${FROM}`;
+  ciRec.idleText(); nRec.idleText();
+  renderView();
+  renderTasks();
+  if(!document.getElementById("progress").classList.contains("hidden")) renderProgress();
+  if(!document.getElementById("journal").classList.contains("hidden")) renderJournal();
+}
+document.getElementById("langBtn").onclick = () => { lang = lang==="am" ? "en" : "am"; lsSet("lang",lang); applyLang(); };
+
+function setGreeting(){
+  const h = new Date().getHours();
+  const part = t(h<12 ? "morning" : h<17 ? "afternoon" : "evening");
+  const name = (lsGet("ci-name")||"").trim();
+  document.getElementById("greet").textContent = name ? `${part}, ${name} 🌸` : `${part} 🌸`;
+  document.getElementById("welcome").classList.toggle("hidden", lsGet("ci-name") !== null);
+}
+document.getElementById("nameBtn").onclick = () => { lsSet("ci-name", document.getElementById("nameIn").value.trim() || " "); setGreeting(); };
+
+/* ================= day switcher (fill in missed days) ================= */
+function renderView(){
+  const isToday = VIEW===TODAY;
+  document.getElementById("viewLabel").textContent = isToday ? t("dateToday")
+    : fromKey(VIEW).toLocaleDateString(LOC(),{weekday:"long",day:"numeric",month:"short"});
+  document.getElementById("pastHint").classList.toggle("hidden", isToday);
+  document.getElementById("nextDay").disabled = isToday;
+  document.getElementById("prevDay").disabled = (numOf(TODAY)-vNum()) >= MAX_BACK;
+  document.getElementById("love").textContent = pick(LOVE)[L()];
+  document.getElementById("challenge").textContent = pick(CHALLENGES,3)[L()];
+  const tip = pick(TIPS,5)[L()];
+  document.getElementById("tipTitle").textContent = tip[0];
+  document.getElementById("tipBody").textContent = tip[1];
+  const showNote = MY_NOTES.length && vNum() % 3 === 0;
+  document.getElementById("noteCard").classList.toggle("hidden", !showNote);
+  if(showNote) document.getElementById("noteText").textContent = MY_NOTES[Math.floor(vNum()/3) % MY_NOTES.length];
+  renderQuestions(); renderRoutine(); renderWater(); renderChallenge(); renderSummary();
+  const d = S.days[VIEW];
+  if(d && d.checkin) document.getElementById("doneMsg").textContent = encouragement(d);
+}
+function setView(k){
+  VIEW = k; resetForm();
+  const d = S.days[VIEW]; if(d && d.checkin) loadCheckin(d);
+  renderView(); restoreDraft(); window.scrollTo({top:0});
+}
+function shift(n){ const d = fromKey(VIEW); d.setDate(d.getDate()+n); const k = keyOf(d); if(k<=TODAY) setView(k); }
+document.getElementById("prevDay").onclick = () => shift(-1);
+document.getElementById("nextDay").onclick = () => shift(1);
+
+/* ================= tabs ================= */
+document.querySelectorAll("[data-tab]").forEach(b=>b.onclick = () => {
+  document.querySelectorAll("[data-tab]").forEach(x=>x.classList.toggle("on", x===b));
+  ["today","tasks","progress","journal"].forEach(id=>document.getElementById(id).classList.toggle("hidden", id!==b.dataset.tab));
+  if(b.dataset.tab==="progress") renderProgress();
+  if(b.dataset.tab==="journal") renderJournal();
+  window.scrollTo({top:0});
+});
+
+/* ================= routine & water ================= */
+function renderRoutine(){
+  const r = day().routine, box = document.getElementById("routine"); box.innerHTML = "";
+  ROUTINE.forEach(g=>{
+    const h = document.createElement("div"); h.className = "sub"; h.textContent = t(g.g); box.appendChild(h);
+    g.items.forEach(([id,ico,en,am])=>{
+      const row = document.createElement("div"); row.className = "check" + (r[id] ? " on" : "");
+      row.innerHTML = `<span class="ico">${ico}</span><span class="lbl">${lang==="am"?am:en}</span><span class="box">${r[id]?"✓":""}</span>`;
+      row.onclick = () => { const d = day(); d.routine[id] = !d.routine[id]; saveDay(d); renderRoutine(); renderSummary(); };
+      box.appendChild(row);
+    });
+  });
+}
+function renderWater(){
+  const w = day().water || 0, box = document.getElementById("water"); box.innerHTML = "";
+  for(let i=1;i<=Math.max(waterGoal,w);i++){
+    const b = document.createElement("button"); b.className = "drop" + (i<=w ? " on" : ""); b.textContent = "💧";
+    b.onclick = () => { const d = day(); d.water = (d.water===i) ? i-1 : i; saveDay(d); renderWater(); renderSummary(); };
+    box.appendChild(b);
+  }
+  document.getElementById("waterTxt").textContent = `${w} / ${waterGoal}`;
+  document.getElementById("wGoal").textContent = waterGoal;
+}
+document.getElementById("wMinus").onclick = () => { waterGoal = Math.max(1,waterGoal-1); lsSet("water-goal",waterGoal); renderWater(); renderSummary(); };
+document.getElementById("wPlus").onclick  = () => { waterGoal = Math.min(16,waterGoal+1); lsSet("water-goal",waterGoal); renderWater(); renderSummary(); };
+function renderChallenge(){
+  const done = !!day().challenge, b = document.getElementById("challengeBtn");
+  b.classList.toggle("on", done); b.textContent = done ? t("challengeDid") : t("challengeBtn");
+}
+document.getElementById("challengeBtn").onclick = () => { const d = day(); d.challenge = !d.challenge; saveDay(d); renderChallenge(); };
+function renderSummary(){
+  const r = day().routine, done = ALL_ITEMS.filter(i=>r[i]).length;
+  document.getElementById("sRoutine").textContent = `${done}/${ALL_ITEMS.length}`;
+  document.getElementById("routinePct").textContent = Math.round(done/ALL_ITEMS.length*100)+"%";
+  document.getElementById("sWater").textContent = `${day().water||0}/${waterGoal}`;
+  const tk = S.tasks.filter(x=>x.kind==="daily" && x.period===VIEW);
+  document.getElementById("sTasks").textContent = `${tk.filter(x=>x.done).length}/${tk.length}`;
+}
+
+/* ================= check-in ================= */
+let ci = {mood:null, answers:{}};
+function renderQuestions(){
+  const box = document.getElementById("dailyQs"); box.innerHTML = "";
+  viewQs().forEach(q=>{
+    const [text, opts] = q[lang];
+    const b = document.createElement("div"); b.className = "block";
+    b.innerHTML = `<div class="q">${esc(text)}</div><div class="chips">${opts.map((o,i)=>
+      `<button data-i2="${i}" class="${ci.answers[q.id]===i?"on":""}">${esc(o)}</button>`).join("")}</div>`;
+    b.querySelectorAll("button").forEach(btn=>btn.onclick = () => {
+      ci.answers[q.id] = Number(btn.dataset.i2);
+      b.querySelectorAll("button").forEach(x=>x.classList.toggle("on", x===btn));
+    });
+    box.appendChild(b);
+  });
+}
+document.getElementById("moods").addEventListener("click", e=>{
+  const b = e.target.closest("button"); if(!b) return;
+  ci.mood = b.dataset.v;
+  document.querySelectorAll("#moods button").forEach(x=>x.classList.toggle("on", x===b));
+  document.getElementById("save").disabled = false;
+});
+function encouragement(d){
+  const a = d.answers || {};
+  if(a.carry===2 || a.sleep===2 || a.calm===2) return t("encHeavy");
+  if(Number(d.mood)<=2) return t("encLow");
+  if(Number(d.mood)>=4) return t("encGood");
+  return t("encMid");
+}
+document.getElementById("save").onclick = async () => {
+  const d = day();
+  Object.assign(d, {mood:ci.mood, answers:{...ci.answers}, qids:viewQs().map(q=>q.id),
+    good:["g1","g2","g3"].map(id=>document.getElementById(id).value.trim()).filter(Boolean),
+    text:document.getElementById("text").value.trim(), audio:ciRec.blob||null, need:currentNeed, checkin:true});
+  if(await saveDay(d)){ await clearDraft(VIEW); showDone(d); }
+};
+function showDone(d){
+  document.getElementById("form").classList.add("hidden");
+  document.getElementById("done").classList.remove("hidden");
+  document.getElementById("doneMsg").textContent = encouragement(d);
+}
+document.getElementById("edit").onclick = () => {
+  document.getElementById("done").classList.add("hidden");
+  document.getElementById("form").classList.remove("hidden");
+};
+function resetForm(){
+  ci = {mood:null, answers:{}};
+  currentNeed=""; renderNeeds();
+  document.querySelectorAll("#moods button").forEach(x=>x.classList.remove("on"));
+  ["g1","g2","g3","text"].forEach(id=>document.getElementById(id).value = "");
+  ciRec.show(null); setMode("text");
+  document.getElementById("save").disabled = true;
+  document.getElementById("done").classList.add("hidden");
+  document.getElementById("form").classList.remove("hidden");
+}
+function loadCheckin(d){
+  ci = {mood:d.mood, answers:{...(d.answers||{})}};
+  currentNeed=d.need||""; renderNeeds();
+  document.querySelectorAll("#moods button").forEach(x=>x.classList.toggle("on", x.dataset.v==String(d.mood)));
+  (d.good||[]).forEach((g,i)=>document.getElementById("g"+(i+1)).value = g);
+  document.getElementById("text").value = d.text || "";
+  if(d.audio){ ciRec.show(d.audio); setMode("voice"); }
+  document.getElementById("save").disabled = !ci.mood;
+  showDone(d);
+}
+
+/* ================= free notes ================= */
+document.getElementById("nSave").onclick = async () => {
+  const title = document.getElementById("nTitle").value.trim(), text = document.getElementById("nText").value.trim();
+  if(!title && !text && !nRec.blob) return;
+  const n = {id:Date.now()+"-"+Math.random().toString(36).slice(2,6), date:TODAY, created:Date.now(), title, text, audio:nRec.blob||null};
+  if(!await put("notes",n)) return; S.notes.push(n);
+  document.getElementById("nTitle").value = ""; document.getElementById("nText").value = ""; nRec.show(null); setNMode("text");
+  toast(); renderJournal();
+};
+
+/* ================= breathing ================= */
+const orb = document.getElementById("orb"), bText = document.getElementById("bText");
+let bTimers = [];
+function runBreath(){
+  bTimers.forEach(clearTimeout); bTimers = [];
+  document.getElementById("bAgain").classList.add("hidden");
+  document.getElementById("bSub").textContent = t("calmSub");
+  const steps = [["breatheIn",4000,1],["hold",4000,1],["breatheOut",6000,.55]];
+  let at = 600;
+  orb.style.transition = "none"; orb.style.transform = "scale(.55)";
+  for(let r=0;r<5;r++) steps.forEach(([k,ms,sc])=>{
+    bTimers.push(setTimeout(()=>{ bText.textContent = t(k); orb.style.transition = `transform ${ms}ms ease-in-out`; orb.style.transform = `scale(${sc})`; }, at));
+    at += ms;
+  });
+  bTimers.push(setTimeout(()=>{ bText.textContent = t("calmDone"); document.getElementById("bSub").textContent = "";
+    document.getElementById("bAgain").classList.remove("hidden"); }, at));
+}
+document.getElementById("calmBtn").onclick = () => { document.getElementById("breathe").classList.remove("hidden"); runBreath(); };
+document.getElementById("bAgain").onclick = runBreath;
+document.getElementById("bClose").onclick = () => { bTimers.forEach(clearTimeout); document.getElementById("breathe").classList.add("hidden"); };
+
+/* ================= tasks ================= */
+function renderTasks(){
+  [["daily",TODAY,"dailyList","dailyCount"],["weekly",WEEK,"weeklyList","weeklyCount"]].forEach(([kind,period,listId,countId])=>{
+    const list = S.tasks.filter(x=>x.kind===kind && x.period===period).sort((a,b)=>(a.done-b.done)||(a.created-b.created));
+    const box = document.getElementById(listId); box.innerHTML = "";
+    if(!list.length) box.innerHTML = `<div class="none">${t("noTasks")}</div>`;
+    list.forEach(tk=>{
+      const row = document.createElement("div"); row.className = "check task" + (tk.done?" on":"");
+      row.innerHTML = `<span class="box">${tk.done?"✓":""}</span><span class="lbl">${esc(tk.title)}</span><button class="del" aria-label="Delete">✕</button>`;
+      row.onclick = async e => {
+        if(e.target.classList.contains("del")){ if(!await del("tasks",tk.id)) return; S.tasks = S.tasks.filter(x=>x.id!==tk.id); }
+        else { const next={...tk,done:!tk.done,doneDate:!tk.done ? TODAY : null}; if(!await put("tasks",next)) return; Object.assign(tk,next); toast(); }
+        renderTasks(); renderSummary();
+      };
+      box.appendChild(row);
+    });
+    document.getElementById(countId).textContent = `${list.filter(x=>x.done).length}/${list.length}`;
+  });
+}
+document.querySelectorAll("form.addrow").forEach(f=>f.onsubmit = async e => {
+  e.preventDefault();
+  const inp = f.querySelector("input"), title = inp.value.trim(); if(!title) return;
+  const kind = f.dataset.kind;
+  const tk = {id:Date.now()+"-"+Math.random().toString(36).slice(2,6), title, kind, period:kind==="daily"?TODAY:WEEK, done:false, doneDate:null, created:Date.now()};
+  if(!await put("tasks",tk)) return; S.tasks.push(tk); inp.value = ""; renderTasks(); renderSummary(); toast();
+});
+function rollTasks(){
+  S.tasks.forEach(tk=>{
+    if(tk.done) return;
+    if(tk.kind==="daily" && tk.period<TODAY){ tk.period = TODAY; put("tasks",tk); }
+    if(tk.kind==="weekly" && tk.period<WEEK){ tk.period = WEEK; put("tasks",tk); }
+  });
+}
+
+/* ================= progress ================= */
+const pct = (a,b) => b ? Math.round(a/b*100) : null;
+function renderProgress(){
+  const all = Object.keys(S.days).sort();
+  const since = Math.floor((fromKey(TODAY)-fromKey(all[0]||TODAY))/864e5)+1;
+  const N = Math.max(1, Math.min(7, since));
+  const keys = lastDays(N);
+  const ds = keys.map(k=>S.days[k] || {routine:{}, water:0});
+  const cnt = ids => ds.reduce((s,d)=>s+ids.filter(i=>d.routine && d.routine[i]).length,0);
+  const doneT = S.tasks.filter(x=>x.done && keys.includes(x.doneDate)).length;
+  const openT = S.tasks.filter(x=>!x.done && ((x.kind==="daily"&&x.period===TODAY)||(x.kind==="weekly"&&x.period===WEEK))).length;
+  const checked = ds.filter(d=>d.checkin);
+  const waterSum = ds.reduce((s,d)=>s+(d.water||0),0);
+  const pr = cnt(["prayAM","prayPM"]), me = cnt(["breakfast","lunch","dinner"]), he = cnt(["exercise","sleptOnTime","selfcare","family","oneThing"]);
+  const ch = ds.filter(d=>d.challenge).length;
+  const A = [
+    {k:"aPrayer", v:pct(pr,2*N), note:`${pr}/${2*N}`, c:"var(--lav)"},
+    {k:"aMeals", v:pct(me,3*N), note:`${me}/${3*N}`, c:"var(--peach)"},
+    {k:"aWater", v:pct(ds.reduce((s,d)=>s+Math.min(d.water||0,waterGoal),0), waterGoal*N), note:t("nGlasses")(waterSum), c:"var(--sky)"},
+    {k:"aHealth", v:pct(he,5*N), note:`${he}/${5*N}`, c:"var(--mint)"},
+    {k:"aChallenge", v:pct(ch,N), note:`${ch}/${N}`, c:"#f2a0c4"},
+    {k:"aTasks", v:pct(doneT,doneT+openT), note:(doneT+openT) ? t("nTasks")(doneT,openT) : t("noTasksYet"), c:"var(--rose)"},
+    {k:"aCheckins", v:pct(checked.length,N), note:`${checked.length}/${N}`, c:"#d98bc4"}
+  ];
+  const valid = A.filter(a=>a.v!==null);
+  const overall = valid.length ? Math.round(valid.reduce((s,a)=>s+a.v,0)/valid.length) : 0;
+  document.getElementById("overall").textContent = overall+"%";
+  document.getElementById("ringArc").style.strokeDashoffset = 289*(1-overall/100);
+
+  const name = k => t(k).replace(/^\S+\s/,"");
+  if(all.length && valid.some(a=>a.v>0)){
+    const s = [...valid].sort((a,b)=>b.v-a.v), best = s[0], low = s[s.length-1];
+    document.getElementById("insight").innerHTML = best.v===low.v ? t("balance") : t("insight")(name(best.k), name(low.k));
+  } else document.getElementById("insight").textContent = t("insightEmpty");
+
+  const have = new Set(all.filter(k=>S.days[k].checkin));
+  const d = new Date(now); if(!have.has(keyOf(d))) d.setDate(d.getDate()-1);
+  let streak = 0; while(have.has(keyOf(d))){ streak++; d.setDate(d.getDate()-1); }
+  document.getElementById("streak").textContent = streak;
+  document.getElementById("avgMood").textContent = checked.length ? MOODS[Math.round(checked.reduce((s,x)=>s+Number(x.mood),0)/checked.length)] : "–";
+  document.getElementById("avgWater").textContent = (waterSum/N).toFixed(1).replace(/\.0$/,"");
+
+  const daysBox = document.getElementById("days"); daysBox.innerHTML = "";
+  lastDays(7).forEach(k=>{
+    const x = S.days[k], r = x ? ALL_ITEMS.filter(i=>x.routine && x.routine[i]).length/ALL_ITEMS.length : 0;
+    const c = document.createElement("div"); c.className = "d";
+    c.innerHTML = `<div class="em">${x && x.mood ? MOODS[x.mood] : ""}</div><div class="col" style="height:${Math.max(4,r*80)}px;opacity:${r?1:.25}"></div>${fromKey(k).toLocaleDateString(LOC(),{weekday:"short"})}`;
+    daysBox.appendChild(c);
+  });
+
+  const ab = document.getElementById("aspects"); ab.innerHTML = "";
+  A.forEach(a=>{
+    const el = document.createElement("div"); el.className = "aspect";
+    el.innerHTML = `<div class="row"><b>${t(a.k)}</b><span>${a.note}${a.v!==null?` · ${a.v}%`:""}</span></div><div class="bar"><i style="width:${a.v||0}%;background:${a.c}"></i></div>`;
+    ab.appendChild(el);
+  });
+}
+
+/* ================= journal ================= */
+function renderJournal(){
+  const box = document.getElementById("entries"); box.innerHTML = "";
+  const items = [
+    ...Object.values(S.days).filter(d=>d.checkin).map(d=>({kind:"c", date:d.date, sort:d.date+"~", d})),
+    ...S.notes.map(n=>({kind:"n", date:n.date, sort:n.date+" "+String(n.created).padStart(15,"0"), n}))
+  ].sort((a,b)=>b.sort.localeCompare(a.sort));
+  if(!items.length){ box.innerHTML = `<div class="card empty">${t("journalEmpty")}</div>`; return; }
+  const dfmt = k => fromKey(k).toLocaleDateString(LOC(),{weekday:"short",day:"numeric",month:"short"});
+  items.forEach(it=>{
+    const c = document.createElement("div"); c.className = "card entry";
+    if(it.kind==="n"){
+      const n = it.n;
+      const time = new Date(n.created).toLocaleTimeString(LOC(),{hour:"numeric",minute:"2-digit"});
+      c.innerHTML = `<div class="ntop"><span class="hint" style="margin:0">${t("noteTag")} · ${dfmt(n.date)}, ${time}</span><button class="del">${t("del")}</button></div>
+        ${n.title ? `<b style="display:block;margin-bottom:4px">${esc(n.title)}</b>` : ""}${n.text ? `<div class="ntxt">${esc(n.text)}</div>` : ""}`;
+      if(n.audio){ const a = document.createElement("audio"); a.controls = true; a.src = URL.createObjectURL(n.audio); c.appendChild(a); }
+      const db_ = c.querySelector(".del");
+      db_.onclick = async () => {
+        if(!db_.classList.contains("armed")){ db_.classList.add("armed"); db_.textContent = t("deleteQ");
+          setTimeout(()=>{ db_.classList.remove("armed"); db_.textContent = t("del"); }, 3000); return; }
+        if(!await del("notes",n.id)) return; S.notes = S.notes.filter(x=>x.id!==n.id); renderJournal();
+      };
+    } else {
+      const e = it.d;
+      const qa = Object.entries(e.answers||{}).map(([id,i])=>{
+        const q = QUESTIONS.find(x=>x.id===id); if(!q) return "";
+        const [text,opts] = q[lang]; return `<div class="qa"><span>${esc(text)}</span> <b>${esc(opts[i]||"")}</b></div>`;
+      }).join("");
+      c.innerHTML = `<div class="top"><b>${t("checkinTag")} · ${dfmt(e.date)}</b><span class="m">${MOODS[e.mood]||""}</span></div>
+        ${e.need && needIds.includes(e.need) ? `<div class="qa"><span>${g("savedNeed")}</span> <b>${esc(g("needs")[needIds.indexOf(e.need)])}</b></div>` : ""}${qa}
+        ${(e.good&&e.good.length) ? `<div class="sec">${t("goodThings")}</div><ul>${e.good.map(g=>`<li>${esc(g)}</li>`).join("")}</ul>` : ""}
+        ${(e.text||e.audio) ? `<div class="sec learned">${t("learned")}</div>` : ""}${e.text ? `<div class="ntxt">${esc(e.text)}</div>` : ""}
+        ${e.challenge ? `<div class="sec">${t("challengeTag")}</div>` : ""}`;
+      if(e.audio){ const a = document.createElement("audio"); a.controls = true; a.src = URL.createObjectURL(e.audio);
+        const l = c.querySelector(".learned"); const txt = l && l.nextElementSibling && l.nextElementSibling.classList.contains("ntxt") ? l.nextElementSibling : l;
+        txt ? txt.after(a) : c.appendChild(a); }
+    }
+    box.appendChild(c);
+  });
+}
+
+</script>
+<script src="gentle.js?v=1795084544"></script>
+<script src="month.js?v=1795084544"></script>
+<script src="extras.js?v=1795084544"></script>
+<script src="looks.js?v=1795084544"></script>
+<script src="fun.js?v=1795084544"></script>
+<script src="novi.js?v=1795084544"></script>
+<script src="food.js?v=1795084544"></script>
+<script>
+/* ================= start ================= */
+(async()=>{
+  db = await openDB();
+  if(db){
+    (await getAll("days")).forEach(d=>S.days[d.date]=d);
+    S.tasks = await getAll("tasks");
+    S.notes = await getAll("notes");
+  }
+  await rollTasks();
+  applyLang();
+  const d = S.days[TODAY]; if(d && d.checkin) loadCheckin(d); await restoreDraft();
+  if(!db) storageProblem();
+})().catch(()=>storageProblem());
+</script>
+</body>
+</html>

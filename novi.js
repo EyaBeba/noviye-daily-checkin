@@ -2,15 +2,19 @@
    A short welcome quiz sets her colour, music taste and how she likes to unwind after a shift. */
 
 /* prayer is part of her day */
+const CARE = ['restBreak','properMeal','sunlight','called','metime'];
 if(!lsGet('gentle-routines')){
- selectedRoutines = ['prayAM','prayPM','breakfast','selfcare','sleptOnTime'];
- lsSet('gentle-routines', JSON.stringify(selectedRoutines));
+ selectedRoutines = ['prayAM','prayPM',...CARE];
+ lsSet('gentle-routines', JSON.stringify(selectedRoutines)); lsSet('care-added','1');
+} else if(!lsGet('care-added')){
+ selectedRoutines = [...new Set([...selectedRoutines, ...CARE])];
+ lsSet('gentle-routines', JSON.stringify(selectedRoutines)); lsSet('care-added','1');
 }
 
 /* ---------- her answers ---------- */
 const QUIZ = [
  {key:'colour', q:'Pick your favourite colours 🎨', hint:'Choose as many as you like.', multi:true, opts:['💗 Pink','💜 Purple','🍑 Peach','🌿 Green','💙 Blue','❤️ Red','💛 Yellow','🖤 Black & white']},
- {key:'music', q:'What music do you love? 🎵', opts:['🎤 English songs','🇪🇹 Ethiopian songs','💫 Both English & Ethiopian']},
+ {key:'music', q:'What music do you love? 🎵', hint:'Choose as many as you like.', multi:true, opts:['🎤 English songs','🇪🇹 Ethiopian songs','🌍 Afrobeats']},
  {key:'unwind', q:'After a long shift, what helps you most? 🌙', opts:['🍵 A warm cup of tea','🎧 Music','📞 Talking to someone','😴 Just sleep']}
 ];
 const COLOUR_THEME = ['rose','lavender','peach','sage','ocean','berry','honey','mono'];
@@ -87,15 +91,22 @@ const SONGS = {
   ['Listen to Aster Aweke today 🎶','Aster Aweke'],
   ['Listen to Mahmoud Ahmed today 🎶','Mahmoud Ahmed'],
   ['Listen to Mulatu Astatke today 🎶','Mulatu Astatke']
+ ],
+ af:[ // Afrobeats
+  ['Listen to Burna Boy today 🎶','Burna Boy'],['Listen to Wizkid today 🎶','Wizkid'],['Listen to Tems today 🎶','Tems'],
+  ['Listen to Rema today 🎶','Rema'],['Listen to Davido today 🎶','Davido'],['Listen to Ayra Starr today 🎶','Ayra Starr']
  ]
 };
+// older answers were a single choice (2 meant "both English & Ethiopian")
+const musicPicks = () => { const m = answers().music; if(m==null) return []; if(Array.isArray(m)) return m; return m===2 ? [0,1] : [m]; };
 const surpriseBase = pickSurprise;
 pickSurprise = function(k){
  const sp = surpriseBase(k), n = dayIdx(k);
  if(sp[1]==='Tiny dare' && isOff(k)) return ['🌸','Day-off dare', BIG_DARES[n % BIG_DARES.length]];
  if(sp[1]==='Song for today'){
-  const m = answers().music, list = m===0 ? SONGS.en : m===1 ? SONGS.et : (Math.floor(n/4)%2 ? SONGS.et : SONGS.en);
-  const song = list[Math.floor(n/8) % list.length]; return ['🎵','Song for today', song[0], song[1]];
+  const picks = musicPicks().length ? musicPicks() : [0,1,2], lists = picks.map(i=>[SONGS.en,SONGS.et,SONGS.af][i]).filter(Boolean);
+  const k = Math.floor(n/4), list = lists[k % lists.length];   // take turns between her styles
+  const song = list[Math.floor(k/lists.length) % list.length]; return ['🎵','Song for today', song[0], song[1]];
  }
  return sp;
 };
@@ -167,12 +178,13 @@ const aboutBase = aboutCard;
 aboutCard = function(){
  const card = aboutBase(), a = answers();
  const ABOUT = {
-  music:['🎤 Loves English songs','🇪🇹 Loves Ethiopian music','🎶 Loves both English & Ethiopian music'],
   unwind:['🍵 Unwinds with a warm cup of tea','🎧 Unwinds with music after a shift','📞 Unwinds by talking to someone','😴 Unwinds with a good sleep']
  };
  const cs = colours();
  const colourChip = cs.length ? `${QUIZ[0].opts[cs[0]].split(' ')[0]} Favourite ${cs.length>1?'colours':'colour'}: ${cs.length>1 ? cs.slice(0,-1).map(i=>COLOUR_NAME[i]).join(', ')+' & '+COLOUR_NAME[cs[cs.length-1]] : COLOUR_NAME[cs[0]]}` : null;
- const mine = [colourChip, ...QUIZ.slice(1).map(q=>a[q.key]!=null ? ABOUT[q.key][a[q.key]] : null)].filter(Boolean);
+ const MUSIC = ['English songs','Ethiopian music','Afrobeats'], mp = musicPicks();
+ const musicChip = mp.length ? `🎶 Loves ${mp.length>1 ? mp.slice(0,-1).map(i=>MUSIC[i]).join(', ')+' & '+MUSIC[mp[mp.length-1]] : MUSIC[mp[0]]}` : null;
+ const mine = [colourChip, musicChip, a.unwind!=null ? ABOUT.unwind[a.unwind] : null].filter(Boolean);
  if(!mine.length) return card;
  let chips = card.querySelector('.aboutchips');
  if(!chips){ card.querySelector('.hint')?.remove(); chips = mk('div','aboutchips'); card.append(chips); }

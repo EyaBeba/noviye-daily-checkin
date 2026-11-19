@@ -15,6 +15,27 @@ const AR_WORDS = [
  ['شكراً','shukran','Thank you',''],
  ['عفواً','afwan','You are welcome / excuse me',''],
  ['مع السلامة','ma\'a as-salama','Goodbye',''],
+ // caregiving at home: taught early because she uses these every day
+ ['دواء','dawa','Medicine',''],
+ ['وقت الدواء','wagt ad-dawa','Time for your medicine','Saudis say "wagt" with a "g"'],
+ ['الأكل جاهز','al-akil jahiz','The food is ready',''],
+ ['جوعان؟','jo\'an?','Are you hungry?','To a woman: "jo\'ana?"'],
+ ['عطشان؟','atshan?','Are you thirsty?','To a woman: "atshana?"'],
+ ['تبغى مساعدة؟','tabgha musa\'ada?','Do you need help?','To a woman: "tabgheen musa\'ada?"'],
+ ['وين يوجعك؟','wain yooja\'ak?','Where does it hurt?','To a woman: "wain yooja\'ich?"'],
+ ['انتبه','intabih','Be careful','To a woman: "intabhi"'],
+ ['على مهلك','ala mahlak','Take it easy / slowly','To a woman: "ala mahlich"'],
+ ['ارتاح شوي','irtah shway','Rest a little','To a woman: "irtahi shway"'],
+ ['تعبان؟','ta\'ban?','Are you tired?','To a woman: "ta\'bana?"'],
+ ['حرارة','harara','Fever / temperature',''],
+ ['دكتور','daktor','Doctor',''],
+ ['مستشفى','mustashfa','Hospital',''],
+ ['حمام','hammam','Bathroom',''],
+ ['مطبخ','matbakh','Kitchen',''],
+ ['غسيل','ghaseel','Laundry',''],
+ ['لحظة','lahdha','Just a moment',''],
+ ['الحين أجي','al-heen aji','I am coming now',''],
+ ['خلصت','khalast','I finished',''],
  ['إيه','eh','Yes','Everyday Saudi "yes"'],
  ['لا','la','No',''],
  ['لو سمحت','law samaht','Please / excuse me','To get someone\'s attention politely'],
@@ -76,7 +97,7 @@ function loadArabic(){
 }
 const arRec = id => (S.arabic||[]).find(r=>r.id===id);
 async function arPut(rec){ if(await put('arabic', rec)){ S.arabic = (S.arabic||[]).filter(r=>r.id!==rec.id).concat(rec); return true; } return false; }
-const builtIn = i => ({id:'w'+i, ar:AR_WORDS[i][0], tr:AR_WORDS[i][1], en:AR_WORDS[i][2], note:AR_WORDS[i][3]});
+const builtIn = i => ({id:'w:'+AR_WORDS[i][0], ar:AR_WORDS[i][0], tr:AR_WORDS[i][1], en:AR_WORDS[i][2], note:AR_WORDS[i][3]});
 const allCards = () => [
  ...AR_WORDS.map((_,i)=>builtIn(i)).filter(w=>arRec(w.id)),
  ...(S.arabic||[]).filter(r=>r.custom && r.en)

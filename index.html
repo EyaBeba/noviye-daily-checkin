@@ -173,7 +173,7 @@
   .bbtns{display:flex;gap:10px;margin-top:26px}
   .bbtns button{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:10px 22px;font:inherit;font-weight:700;cursor:pointer}
 </style>
-<link rel="stylesheet" href="gentle.css?v=1795086025">
+<link rel="stylesheet" href="gentle.css?v=1795088495">
 <script>/* English only for Noviye (Amharic text stays in the code for other versions) */try{localStorage.setItem("novi:lang","en")}catch(e){}</script>
 <script>try{if(localStorage.getItem("novi:pin-hash"))document.documentElement.classList.add("locked")}catch(e){}</script>
 </head>
@@ -430,7 +430,7 @@ en:{
   foot:"Saved in this browser. You choose what to share.",
   breatheIn:"Breathe in…", hold:"Hold…", breatheOut:"Breathe out…", calmDone:"Well done. You came back to yourself 💕",
   calmSub:"Follow the circle. 5 slow breaths.", close:"Close", again:"Again",
-  prayer:"Prayer", meals:"Meals", health:"Health & self-care",
+  prayer:"Prayer", meals:"Meals", health:"Health & self-care", care:"Caring for you too",
   aPrayer:"🙏 Prayer", aMeals:"🍽️ Meals", aWater:"💧 Water", aHealth:"🌿 Health & self-care", aChallenge:"💝 Self-love", aTasks:"✅ Tasks", aCheckins:"🌷 Check-ins",
   nGlasses:n=>`${n} glasses`, nTasks:(d,o)=>`${d} done · ${o} open`, noTasksYet:"no tasks yet",
   insight:(b,l)=>`You're doing beautifully with <b>${b}</b> 💕<br>A gentle focus for the next few days: <b>${l}</b>.`,
@@ -468,7 +468,7 @@ am:{
   foot:"ሁሉም ነገር በዚህ ስልክ ላይ በሚስጥር ይቀመጣል 🔒",
   breatheIn:"ወደ ውስጥ ተንፍሺ…", hold:"ያዢ…", breatheOut:"ቀስ ብለሽ አውጪ…", calmDone:"በጣም ጥሩ። ወደ ራስሽ ተመለስሽ 💕",
   calmSub:"ክቡን ተከተዪ። 5 ቀስ ያሉ ትንፋሾች።", close:"ዝጊ", again:"እንደገና",
-  prayer:"ጸሎት", meals:"ምግብ", health:"ጤና እና ራስን መንከባከብ",
+  prayer:"ጸሎት", meals:"ምግብ", health:"ጤና እና ራስን መንከባከብ", care:"ለራስሽም እንክብካቤ",
   aPrayer:"🙏 ጸሎት", aMeals:"🍽️ ምግብ", aWater:"💧 ውሃ", aHealth:"🌿 ጤና", aChallenge:"💝 ራስን መውደድ", aTasks:"✅ ስራዎች", aCheckins:"🌷 ማስታወሻ",
   nGlasses:n=>`${n} ብርጭቆ`, nTasks:(d,o)=>`${d} ተጠናቀቀ · ${o} ቀሪ`, noTasksYet:"ገና ስራ የለም",
   insight:(b,l)=>`በ<b>${b}</b> በጣም ጥሩ እየሄድሽ ነው 💕<br>ለሚቀጥሉት ቀናት በእርጋታ ትኩረት የምትሰጪው፦ <b>${l}</b>።`,
@@ -549,7 +549,9 @@ const ROUTINE = [
   {g:"prayer", items:[["prayAM","🌅","Morning prayer","የጠዋት ጸሎት"],["prayPM","🌙","Evening prayer","የማታ ጸሎት"]]},
   {g:"meals", items:[["breakfast","🥐","Breakfast","ቁርስ"],["lunch","🥗","Lunch","ምሳ"],["dinner","🍲","Dinner","እራት"]]},
   {g:"health", items:[["exercise","🚶‍♀️","Exercise or a walk","የአካል እንቅስቃሴ ወይም የእግር ጉዞ"],["sleptOnTime","😴","Slept on time last night","ትናንት በሰዓቱ ተኛሁ"],
-    ["selfcare","🧴","Skincare / self-care","የቆዳ እንክብካቤ / ራስን መንከባከብ"],["family","💞","Family time","ከቤተሰብ ጋር ጊዜ"],["oneThing","⭐","Got one thing done","አንድ ነገር ጨረስኩ"]]}
+    ["selfcare","🧴","Skincare / self-care","የቆዳ እንክብካቤ / ራስን መንከባከብ"],["family","💞","Family time","ከቤተሰብ ጋር ጊዜ"],["oneThing","⭐","Got one thing done","አንድ ነገር ጨረስኩ"]]},
+  {g:"care", items:[["restBreak","🛏️","Really rested on my break","በእረፍቴ በደንብ አረፍኩ"],["properMeal","🍲","Ate a proper meal, sitting down","ተቀምጬ በደንብ በላሁ"],
+    ["sunlight","☀️","Stepped outside / got some sunlight","ወደ ውጭ ወጣሁ / ፀሐይ አገኘሁ"],["called","📞","Talked to family or a friend","ከቤተሰብ ወይም ከጓደኛ ጋር ተነጋገርኩ"],["metime","🧘","5 minutes just for me","ለራሴ ብቻ 5 ደቂቃ"]]}
 ];
 const ALL_ITEMS = ROUTINE.flatMap(g=>g.items.map(i=>i[0]));
 const MOODS = {1:"😔",2:"😕",3:"😐",4:"🙂",5:"😊"};
@@ -1111,15 +1113,15 @@ function renderJournal(){
 }
 
 </script>
-<script src="gentle.js?v=1795086025"></script>
-<script src="month.js?v=1795086025"></script>
-<script src="extras.js?v=1795086025"></script>
-<script src="looks.js?v=1795086025"></script>
-<script src="fun.js?v=1795086025"></script>
-<script src="novi.js?v=1795086025"></script>
-<script src="food.js?v=1795086025"></script>
-<script src="arabic.js?v=1795086025"></script>
-<script src="nav.js?v=1795086025"></script>
+<script src="gentle.js?v=1795088495"></script>
+<script src="month.js?v=1795088495"></script>
+<script src="extras.js?v=1795088495"></script>
+<script src="looks.js?v=1795088495"></script>
+<script src="fun.js?v=1795088495"></script>
+<script src="novi.js?v=1795088495"></script>
+<script src="food.js?v=1795088495"></script>
+<script src="arabic.js?v=1795088495"></script>
+<script src="nav.js?v=1795088495"></script>
 <script>
 /* ================= start ================= */
 (async()=>{

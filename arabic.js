@@ -116,8 +116,11 @@ function playURL(url, onFail){
  player.onerror = fail;
  const p = player.play(); if(p && p.catch) p.catch(fail);
 }
+const spoken = text => text.replace(/([\u0628-\u0629\u062A-\u063A\u0641-\u0648\u0621\u0623\u0625])(?=[\s\u061F?!.,،]|$)/g,
+ (m,ch) => '\u0627\u0649\u0648\u064A\u0629\u0621'.includes(ch) ? ch : ch+'\u0652');
 function say(text){
  if(!text) return;
+ text = spoken(text);
  if(navigator.onLine === false){ phoneVoice(text); return; }
  playURL('https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=ar&q='+encodeURIComponent(text), ()=>phoneVoice(text));
 }
@@ -213,8 +216,19 @@ function openHeard(){
   const stopRec = () => { if(mr && mr.state!=='inactive') mr.stop(); };
   recBtn.onclick = async () => {
    if(mr && mr.state==='recording'){ stopRec(); return; }
-   try{ stream = await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false, noiseSuppression:false, autoGainControl:false}}); }
-   catch(e){ recTxt.textContent = "Couldn't reach the microphone. Please allow it, or type instead."; return; }
+   const audio = {echoCancellation:false, noiseSuppression:false, autoGainControl:false, channelCount:{ideal:1}};
+   try{
+    const isBT = l => /bluetooth|airpods|buds|headset|hands.?free|headphone|earphone|\bbt\b|wireless/i.test(l||'');
+    let chosen = lsGet('mic-id');
+    if(!chosen){
+     let ds = (await navigator.mediaDevices.enumerateDevices()).filter(d=>d.kind==='audioinput');
+     if(!ds.some(d=>d.label)){ const probe = await navigator.mediaDevices.getUserMedia({audio:true}); probe.getTracks().forEach(x=>x.stop()); ds = (await navigator.mediaDevices.enumerateDevices()).filter(d=>d.kind==='audioinput'); }
+     const phone = ds.find(d=>!isBT(d.label) && !['default','communications'].includes(d.deviceId));
+     if(phone && ds.some(d=>isBT(d.label))) chosen = phone.deviceId;
+    }
+    try{ stream = await navigator.mediaDevices.getUserMedia({audio: chosen ? {...audio, deviceId:{exact:chosen}} : audio}); }
+    catch(e){ stream = await navigator.mediaDevices.getUserMedia({audio}); }
+   }catch(e){ recTxt.textContent = "Couldn't reach the microphone. Please allow it, or type instead."; return; }
    const ty = ['audio/webm;codecs=opus','audio/webm','audio/mp4','audio/aac'].find(x=>{ try{ return MediaRecorder.isTypeSupported(x); }catch(e){ return false; } }) || '';
    mr = ty ? new MediaRecorder(stream,{mimeType:ty}) : new MediaRecorder(stream); chunks = [];
    mr.ondataavailable = e => { if(e.data && e.data.size) chunks.push(e.data); };

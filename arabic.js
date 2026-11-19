@@ -106,7 +106,7 @@ function phoneVoice(text){
   speechSynthesis.cancel();
   const u = new SpeechSynthesisUtterance(text); u.lang = arVoice ? arVoice.lang : 'ar-SA'; if(arVoice) u.voice = arVoice; u.rate = 0.8;
   speechSynthesis.speak(u);
-  if(!arVoice) setTimeout(()=>{ findVoice(); if(!arVoice) toast('Connect to the internet to hear it'); }, 1200);
+  if(!arVoice) setTimeout(()=>{ findVoice(); if(!arVoice) toast("Couldn't play the sound. Check your internet and try again."); }, 1200);
  }catch(e){}
 }
 function playURL(url, onFail){

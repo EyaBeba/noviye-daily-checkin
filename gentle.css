@@ -153,3 +153,14 @@ body[data-tod=off]{background:radial-gradient(ellipse at 85% 0%,#ffd9e4,transpar
 .ffeel.empty{border-style:dashed;color:var(--rose);font-weight:700}.frow .feelchips{margin-top:10px}.frow .link{margin-top:8px}
 .feelchips button{font-size:13px}.fform{display:grid;gap:10px;margin-top:6px}.fq{font-size:12px;color:var(--soft)}.fadd{margin-top:10px;width:100%}
 .foodins .fins{font-size:14px;margin:4px 0}.fnote{font-size:12px;color:var(--soft);margin-top:14px;border-top:1px solid var(--line);padding-top:10px;line-height:1.6}
+/* arabic */
+.arabic .arhead small{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--rose)}
+.arword{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:8px}
+.arbig{font-family:"Noto Naskh Arabic","Geeza Pro","Arial",serif;font-size:34px;line-height:1.4}
+.arsay{min-width:48px;min-height:48px;border-radius:50%;border:1px solid var(--line);background:var(--rose-soft);font-size:20px;cursor:pointer;flex-shrink:0}
+.artr{font-size:15px;font-style:italic;color:var(--soft)}.aren{font-size:16px;font-weight:700;margin-top:4px}.aren.big{font-size:22px;font-family:var(--serif);font-weight:500}
+.arnote{font-size:13px;color:var(--soft);margin-top:6px}.arabic .lbtns{margin-top:14px}.arstat{display:block;margin-top:10px;font-size:12px;color:var(--soft)}
+.arprog{font-size:12px;color:var(--soft);text-align:center}.flash{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:24px 18px;text-align:center;display:grid;gap:8px;justify-items:center}
+.flashans{display:grid;gap:6px;justify-items:center;border-top:1px dashed var(--line);padding-top:12px;margin-top:6px;width:100%}.flashans[hidden]{display:none}
+.hrow{display:grid;gap:4px;border-bottom:1px solid var(--line);padding:10px 0}.hrow p{font-weight:700}.hrow small{color:var(--soft)}.hrow .link{justify-self:start}
+.armonth .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}.armonth .stat{text-align:center}.armonth .stat b{font-size:24px}.armonth .stat span{font-size:11px}

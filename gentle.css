@@ -164,3 +164,5 @@ body[data-tod=off]{background:radial-gradient(ellipse at 85% 0%,#ffd9e4,transpar
 .flashans{display:grid;gap:6px;justify-items:center;border-top:1px dashed var(--line);padding-top:12px;margin-top:6px;width:100%}.flashans[hidden]{display:none}
 .hrow{display:grid;gap:4px;border-bottom:1px solid var(--line);padding:10px 0}.hrow p{font-weight:700}.hrow small{color:var(--soft)}.hrow .link{justify-self:start}
 .armonth .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}.armonth .stat{text-align:center}.armonth .stat b{font-size:24px}.armonth .stat span{font-size:11px}
+.hrec{display:flex;align-items:center;gap:12px}.hrec small{flex:1;font-size:13px;color:var(--soft)}.hrec[hidden]{display:none}
+.recbtn.small{width:52px;height:52px;font-size:20px}.htop{display:flex;align-items:center;justify-content:space-between;gap:10px}

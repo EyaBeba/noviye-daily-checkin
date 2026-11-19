@@ -93,21 +93,42 @@ function wordOfDay(){
 }
 async function addToDeck(w){ if(!arRec(w.id)) await arPut({id:w.id, box:0, due:todayNum(), added:TODAY}); }
 
-/* ---------- spoken audio (phone's own voice) ---------- */
+/* ---------- sound ----------
+   Built-in phrases: Google's Arabic voice (needs internet, works on any phone).
+   Offline or if that fails: the phone's own text-to-speech. Her own words: her recording. */
 const canSpeak = 'speechSynthesis' in window;
-let arVoice = null;
+let arVoice = null, player = null;
 function findVoice(){ try{ const v = speechSynthesis.getVoices(); arVoice = v.find(x=>/^ar[-_]SA/i.test(x.lang)) || v.find(x=>/^ar/i.test(x.lang)) || null; }catch(e){} }
 if(canSpeak){ findVoice(); try{ speechSynthesis.addEventListener('voiceschanged', findVoice); }catch(e){} }
-function say(text){
- if(!canSpeak) return;
+function phoneVoice(text){
+ if(!canSpeak){ toast('Sound is not available on this phone'); return; }
  try{
   speechSynthesis.cancel();
   const u = new SpeechSynthesisUtterance(text); u.lang = arVoice ? arVoice.lang : 'ar-SA'; if(arVoice) u.voice = arVoice; u.rate = 0.8;
   speechSynthesis.speak(u);
-  if(!arVoice) setTimeout(()=>{ findVoice(); if(!arVoice) toast('No Arabic voice on this phone yet: Settings → Text-to-speech → install Arabic'); }, 1200);
+  if(!arVoice) setTimeout(()=>{ findVoice(); if(!arVoice) toast('Connect to the internet to hear it'); }, 1200);
  }catch(e){}
 }
-function speakBtn(text){ const b = mk('button','arsay','🔊'); b.type = 'button'; b.setAttribute('aria-label','Hear it'); b.onclick = e => { e.stopPropagation(); say(text); }; if(!canSpeak) b.hidden = true; return b; }
+function playURL(url, onFail){
+ try{ if(player){ player.pause(); } }catch(e){}
+ player = new Audio(url);
+ let failed = false; const fail = () => { if(!failed){ failed = true; onFail && onFail(); } };
+ player.onerror = fail;
+ const p = player.play(); if(p && p.catch) p.catch(fail);
+}
+function say(text){
+ if(!text) return;
+ if(navigator.onLine === false){ phoneVoice(text); return; }
+ playURL('https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=ar&q='+encodeURIComponent(text), ()=>phoneVoice(text));
+}
+const recURLs = new Map();
+function playRecording(rec){ if(!recURLs.has(rec.id)) recURLs.set(rec.id, URL.createObjectURL(rec.audio)); playURL(recURLs.get(rec.id), ()=>toast("Couldn't play this recording")); }
+function speakBtn(text, rec){
+ const b = mk('button','arsay', rec && rec.audio ? '▶️' : '🔊'); b.type = 'button'; b.setAttribute('aria-label', rec && rec.audio ? 'Play your recording' : 'Hear it');
+ b.onclick = e => { e.stopPropagation(); rec && rec.audio ? playRecording(rec) : say(text); };
+ if(!(rec && rec.audio) && !text) b.hidden = true;
+ return b;
+}
 
 /* ---------- Today card ---------- */
 const arCard = mk('div','card arabic');
@@ -146,10 +167,10 @@ function startPractice(){
   box.append(mk('small','arprog',`${i+1} of ${cards.length}`));
   const card = mk('div','flash');
   if(englishFirst){ card.append(mk('p','aren big',c.en), mk('p','hint','How do you say it in Arabic?')); }
-  else { const a = mk('p','arbig',c.ar||c.tr); a.lang='ar'; a.dir='rtl'; card.append(a, mk('p','artr',c.tr)); if(c.ar) card.append(speakBtn(c.ar)); card.append(mk('p','hint','What does it mean?')); }
+  else { const a = mk('p','arbig',c.ar||c.tr); a.lang='ar'; a.dir='rtl'; card.append(a); if(c.ar && c.tr!==c.ar) card.append(mk('p','artr',c.tr)); if(c.ar || c.audio) card.append(speakBtn(c.ar, c)); card.append(mk('p','hint','What does it mean?')); }
   const reveal = mk('button','btn','Show answer'); reveal.type = 'button';
   const answer = mk('div','flashans'); answer.hidden = true;
-  if(englishFirst){ const a = mk('p','arbig',c.ar||c.tr); a.lang='ar'; a.dir='rtl'; answer.append(a, mk('p','artr',c.tr)); if(c.ar) answer.append(speakBtn(c.ar)); }
+  if(englishFirst){ const a = mk('p','arbig',c.ar||c.tr); a.lang='ar'; a.dir='rtl'; answer.append(a); if(c.ar && c.tr!==c.ar) answer.append(mk('p','artr',c.tr)); if(c.ar || c.audio) answer.append(speakBtn(c.ar, c)); }
   else answer.append(mk('p','aren big',c.en));
   if(c.note) answer.append(mk('p','arnote',c.note));
   const grade = mk('div','lbtns'); grade.hidden = true;
@@ -162,7 +183,7 @@ function startPractice(){
   };
   again.onclick = () => next(false); good.onclick = () => next(true);
   grade.append(again, good);
-  reveal.onclick = () => { reveal.hidden = true; answer.hidden = false; grade.hidden = false; if(englishFirst && c.ar) say(c.ar); };
+  reveal.onclick = () => { reveal.hidden = true; answer.hidden = false; grade.hidden = false; if(englishFirst){ c.audio ? playRecording(c) : c.ar && say(c.ar); } };
   const stop = mk('button','link','Stop for now'); stop.type = 'button'; stop.onclick = () => { closeSheet(); renderArabic(); };
   card.append(answer); box.append(card, reveal, grade, stop);
  });
@@ -185,21 +206,44 @@ function openHeard(){
   const sound = mk('input'); sound.maxLength = 60; sound.placeholder = 'How it sounds, e.g. "mafi mushkila"'; sound.setAttribute('aria-label','How it sounds');
   const mean = mk('input'); mean.maxLength = 80; mean.placeholder = 'What it means (optional)'; mean.setAttribute('aria-label','What it means');
   const where = mk('input'); where.maxLength = 80; where.placeholder = 'Where you heard it (optional)'; where.setAttribute('aria-label','Where you heard it');
+  // record the word by voice: the way she heard it, or saying it herself
+  let voice = null, mr = null, chunks = [], t0 = 0, tick = null, stream = null;
+  const recRow = mk('div','hrec'), recBtn = mk('button','recbtn small','🎙️'), recTxt = mk('small',null,'Or record it: tap 🎙️ and say the word'), recPlay = mk('button','arsay','▶️');
+  recBtn.type = recPlay.type = 'button'; recBtn.setAttribute('aria-label','Record the word'); recPlay.setAttribute('aria-label','Play recording'); recPlay.hidden = true;
+  const stopRec = () => { if(mr && mr.state!=='inactive') mr.stop(); };
+  recBtn.onclick = async () => {
+   if(mr && mr.state==='recording'){ stopRec(); return; }
+   try{ stream = await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false, noiseSuppression:false, autoGainControl:false}}); }
+   catch(e){ recTxt.textContent = "Couldn't reach the microphone. Please allow it, or type instead."; return; }
+   const ty = ['audio/webm;codecs=opus','audio/webm','audio/mp4','audio/aac'].find(x=>{ try{ return MediaRecorder.isTypeSupported(x); }catch(e){ return false; } }) || '';
+   mr = ty ? new MediaRecorder(stream,{mimeType:ty}) : new MediaRecorder(stream); chunks = [];
+   mr.ondataavailable = e => { if(e.data && e.data.size) chunks.push(e.data); };
+   mr.onstop = () => { clearInterval(tick); stream.getTracks().forEach(x=>x.stop()); recBtn.classList.remove('live'); recBtn.textContent = '🎙️';
+    voice = new Blob(chunks,{type:mr.mimeType||ty||'audio/webm'}); recPlay.hidden = !voice.size; recTxt.textContent = voice.size ? 'Recorded ✓ Tap ▶️ to listen, or 🎙️ to redo' : 'Nothing recorded, try again'; };
+   mr.start(500); t0 = Date.now(); recBtn.classList.add('live'); recBtn.textContent = '■';
+   recTxt.textContent = 'Recording… tap ■ to stop';
+   tick = setInterval(()=>{ const sec = Math.round((Date.now()-t0)/1000); recTxt.textContent = `Recording… 0:${String(sec).padStart(2,'0')} · tap ■ to stop`; if(sec>=20) stopRec(); }, 500);
+  };
+  recPlay.onclick = () => { if(voice) playURL(URL.createObjectURL(voice), ()=>toast("Couldn't play this recording")); };
+  if(!(navigator.mediaDevices && window.MediaRecorder)) recRow.hidden = true;
+  recRow.append(recBtn, recTxt, recPlay);
   const btns = mk('div','lbtns'); const close = mk('button','calm','Close'), save = mk('button','btn','Save word'); close.type = save.type = 'button';
-  close.onclick = () => { closeSheet(); renderArabic(); };
+  close.onclick = () => { stopRec(); closeSheet(); renderArabic(); };
   save.onclick = async () => {
-   const tr = sound.value.trim(); if(!tr){ sound.focus(); return; }
+   if(mr && mr.state==='recording'){ stopRec(); await new Promise(r=>setTimeout(r,300)); }
+   const tr = sound.value.trim() || (voice ? '🎙️ Voice note' : ''); if(!tr){ sound.focus(); return; }
    const isArabic = /[؀-ۿ]/.test(tr);
    const rec = {id:'h'+Date.now(), custom:true, ar:isArabic?tr:'', tr, en:mean.value.trim(), note:where.value.trim() ? 'Heard: '+where.value.trim() : '', box:0, due:todayNum(), added:TODAY};
+   if(voice && voice.size) rec.audio = voice;
    if(await arPut(rec)){ toast(rec.en ? 'Saved, and added to your practice 🌱' : 'Saved. Add the meaning when you know it'); openHeard(); }
   };
-  btns.append(close, save); box.append(sound, mean, where, btns);
+  btns.append(close, save); box.append(sound, recRow, mean, where, btns);
   const mine = (S.arabic||[]).filter(r=>r.custom).sort((a,b)=>b.id.localeCompare(a.id));
   if(mine.length){
    box.append(mk('div','sub','Your words'));
    mine.forEach(r=>{
     const row = mk('div','hrow');
-    const t = mk('p',null,r.tr); row.append(t);
+    const t = mk('div','htop'); t.append(mk('p',null,r.tr)); if(r.audio || r.ar) t.append(speakBtn(r.ar, r)); row.append(t);
     if(r.en) row.append(mk('small',null,r.en));
     else { const m = mk('input'); m.placeholder = 'Add meaning…'; m.maxLength = 80; m.setAttribute('aria-label','Meaning for '+r.tr);
      m.onchange = async () => { const v = m.value.trim(); if(v && await arPut({...r, en:v, due:todayNum()})){ toast('Added to your practice 🌱'); openHeard(); } };

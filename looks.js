@@ -38,7 +38,19 @@ function loadLooks(){
  if(!db) return Promise.resolve();   // storage not open yet: try again on the next render
  return looksLoading || (looksLoading = getAll('looks').then(r=>{ S.looks = r; }).catch(()=>{ S.looks = []; }));
 }
-function shrink(file){
+function drawSmall(src, w, h){
+ const max = 1080, sc = Math.min(1, max/Math.max(w, h));
+ const c = document.createElement('canvas'); c.width = Math.max(1,Math.round(w*sc)); c.height = Math.max(1,Math.round(h*sc));
+ c.getContext('2d').drawImage(src,0,0,c.width,c.height);
+ return new Promise((ok,no)=>c.toBlob(b=>b && b.size ? ok(b) : no(Error('encode')), 'image/jpeg', 0.8));
+}
+async function shrink(file){
+ try{ return await shrinkImg(file); }catch(e){}
+ try{ if(window.createImageBitmap){ const bmp = await createImageBitmap(file); return await drawSmall(bmp, bmp.width, bmp.height); } }catch(e){}
+ if(file.size && file.size < 6*1024*1024) return file;   // last resort: keep the photo as it is
+ throw Error('photo');
+}
+function shrinkImg(file){
  return new Promise((resolve,reject)=>{
   const url = URL.createObjectURL(file), img = new Image();
   img.onload = () => {
@@ -62,7 +74,7 @@ function openSheet(build){ sheet.replaceChildren(); const box = mk('div','lbox')
 function closeSheet(){ sheet.hidden = true; document.body.style.overflow = ''; }
 sheet.addEventListener('keydown', e=>{ if(e.key==='Escape') closeSheet(); });
 
-const picker = mk('input'); picker.type = 'file'; picker.accept = 'image/*'; picker.hidden = true; document.body.append(picker);
+const picker = mk('input'); picker.type = 'file'; picker.accept = 'image/*'; picker.className = 'offscreen'; picker.tabIndex = -1; picker.setAttribute('aria-hidden','true'); document.body.append(picker);
 picker.onchange = async () => {
  const file = picker.files[0]; picker.value = ''; if(!file) return;
  let blob; try{ blob = await shrink(file); }catch(e){ toast(lk('photoFail')); return; }

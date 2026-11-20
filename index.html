@@ -173,7 +173,7 @@
   .bbtns{display:flex;gap:10px;margin-top:26px}
   .bbtns button{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:10px 22px;font:inherit;font-weight:700;cursor:pointer}
 </style>
-<link rel="stylesheet" href="gentle.css?v=1795088495">
+<link rel="stylesheet" href="gentle.css?v=1795162490">
 <script>/* English only for Noviye (Amharic text stays in the code for other versions) */try{localStorage.setItem("novi:lang","en")}catch(e){}</script>
 <script>try{if(localStorage.getItem("novi:pin-hash"))document.documentElement.classList.add("locked")}catch(e){}</script>
 </head>
@@ -599,11 +599,31 @@ function openDB(){
     }catch(e){ res(null); }
   });
 }
+/* iPhone Safari can refuse to store photo/audio files directly, so they are saved as raw data and turned back into files when read. */
+const BLOB_FIELDS = ["photo","audio"];
+async function toStorable(obj){
+  if(!obj || typeof obj!=="object" || !BLOB_FIELDS.some(f=>obj[f] instanceof Blob)) return obj;
+  const out = {...obj};
+  for(const f of BLOB_FIELDS){
+    if(out[f] instanceof Blob){
+      const buf = out[f].arrayBuffer ? await out[f].arrayBuffer() : await new Promise((ok,no)=>{ const r = new FileReader(); r.onload=()=>ok(r.result); r.onerror=no; r.readAsArrayBuffer(out[f]); });
+      out[f] = {__blob:true, type:out[f].type||"", data:buf};
+    }
+  }
+  return out;
+}
+function fromStored(obj){
+  if(!obj || typeof obj!=="object") return obj;
+  let out = obj;
+  for(const f of BLOB_FIELDS){ const v = obj[f]; if(v && v.__blob){ if(out===obj) out = {...obj}; out[f] = new Blob([v.data],{type:v.type}); } }
+  return out;
+}
 const getAll = store => new Promise((res,reject)=>{
-  try{ const r = db.transaction(store).objectStore(store).getAll(); r.onsuccess=()=>res(r.result||[]); r.onerror=()=>reject(r.error); }catch(e){ reject(e); }
+  try{ const r = db.transaction(store).objectStore(store).getAll(); r.onsuccess=()=>res((r.result||[]).map(fromStored)); r.onerror=()=>reject(r.error); }catch(e){ reject(e); }
 });
 async function writeRecord(store, value, remove=false){
   if(!db){ storageProblem(); return false; }
+  if(!remove){ try{ value = await toStorable(value); }catch(e){ storageProblem(); return false; } }
   return new Promise(resolve=>{
     try{
       const tx=db.transaction(store,"readwrite");
@@ -683,8 +703,9 @@ function makeRecorder(p){
   R.idleText = ui;
   R.show = blob => {
     R.blob = blob;
-    if(R.url) URL.revokeObjectURL(R.url); R.url = blob ? URL.createObjectURL(blob) : null;
+    const old = R.url; R.url = blob ? URL.createObjectURL(blob) : null;
     if(R.url) audioEl.src = R.url; else audioEl.removeAttribute("src");
+    if(old) setTimeout(()=>URL.revokeObjectURL(old), 3000);   // let the player switch first
     ($("Playback")||$("playback")).classList.toggle("hidden", !blob);
     wrap.classList.toggle("hidden", !!blob);
   };
@@ -1113,15 +1134,15 @@ function renderJournal(){
 }
 
 </script>
-<script src="gentle.js?v=1795088495"></script>
-<script src="month.js?v=1795088495"></script>
-<script src="extras.js?v=1795088495"></script>
-<script src="looks.js?v=1795088495"></script>
-<script src="fun.js?v=1795088495"></script>
-<script src="novi.js?v=1795088495"></script>
-<script src="food.js?v=1795088495"></script>
-<script src="arabic.js?v=1795088495"></script>
-<script src="nav.js?v=1795088495"></script>
+<script src="gentle.js?v=1795162490"></script>
+<script src="month.js?v=1795162490"></script>
+<script src="extras.js?v=1795162490"></script>
+<script src="looks.js?v=1795162490"></script>
+<script src="fun.js?v=1795162490"></script>
+<script src="novi.js?v=1795162490"></script>
+<script src="food.js?v=1795162490"></script>
+<script src="arabic.js?v=1795162490"></script>
+<script src="nav.js?v=1795162490"></script>
 <script>
 /* ================= start ================= */
 (async()=>{

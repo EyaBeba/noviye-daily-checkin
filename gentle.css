@@ -167,3 +167,4 @@ body[data-tod=off]{background:radial-gradient(ellipse at 85% 0%,#ffd9e4,transpar
 .hrec{display:flex;align-items:center;gap:12px}.hrec small{flex:1;font-size:13px;color:var(--soft)}.hrec[hidden]{display:none}
 .recbtn.small{width:52px;height:52px;font-size:20px}.htop{display:flex;align-items:center;justify-content:space-between;gap:10px}
 .offscreen{position:fixed;left:-9999px;top:0;width:1px;height:1px;opacity:0}
+.lklabel{width:100%;font-size:12px;font-weight:700;color:var(--soft)}

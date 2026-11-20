@@ -75,8 +75,13 @@ function closeSheet(){ sheet.hidden = true; document.body.style.overflow = ''; }
 sheet.addEventListener('keydown', e=>{ if(e.key==='Escape') closeSheet(); });
 
 const picker = mk('input'); picker.type = 'file'; picker.accept = 'image/*'; picker.className = 'offscreen'; picker.tabIndex = -1; picker.setAttribute('aria-hidden','true'); document.body.append(picker);
-picker.onchange = async () => {
- const file = picker.files[0]; picker.value = ''; if(!file) return;
+// a second chooser that opens the camera straight away (front camera, for outfit photos)
+const camera = mk('input'); camera.type = 'file'; camera.accept = 'image/*'; camera.setAttribute('capture','user');
+camera.className = 'offscreen'; camera.tabIndex = -1; camera.setAttribute('aria-hidden','true'); document.body.append(camera);
+camera.onchange = () => picker.onchange.call(camera);
+picker.onchange = async function(){
+ const input = this && this.files ? this : picker;
+ const file = input.files[0]; input.value = ''; if(!file) return;
  let blob; try{ blob = await shrink(file); }catch(e){ toast(lk('photoFail')); return; }
  const prev = URL.createObjectURL(blob); let vibe = null;
  openSheet(box=>{
@@ -126,7 +131,13 @@ async function renderLookRow(){
  const mine = looksOn(VIEW);
  const top = mk('div','lrow');
  mine.forEach(l=>top.append(thumb(l)));
- if(mine.length < MAX_LOOKS){ const add = mk('button','lookadd', VIEW===TODAY ? lk('add') : lk('addPast')); add.type = 'button'; add.onclick = () => picker.click(); top.append(add); }
+ if(mine.length < MAX_LOOKS){
+  if(!mine.length) top.append(mk('small','lklabel', VIEW===TODAY ? "📸 Today's look" : '📸 A look for this day'));
+  const snap = mk('button','lookadd', '📷 Take a photo'); snap.type = 'button'; snap.onclick = () => camera.click();
+  const pick = mk('button','lookadd', '🖼️ From gallery'); pick.type = 'button'; pick.onclick = () => picker.click();
+  snap.setAttribute('aria-label', lk('add')+' with the camera'); pick.setAttribute('aria-label', lk('add')+' from your photos');
+  top.append(snap, pick);
+ }
  lookRow.append(top);
  const ago = fromKey(VIEW); ago.setMonth(ago.getMonth()-1); const old = looksOn(keyOf(ago));
  if(old.length){ const m = mk('div','lago'); m.append(mk('small',null,lk('monthAgo')+' 💭')); old.forEach(l=>m.append(thumb(l))); lookRow.append(m); }
